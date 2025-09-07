@@ -42,3 +42,4 @@ Funciona como aplicación instalable desde **Google Chrome** en Android.
    - Folder: `/ (root)`
 5. Guarda y espera unos segundos.
 6. Tu app estará disponible en:
+7. https://Rafael052003.github.io/productos-sensitivos/

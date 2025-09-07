@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Productos Sensitivos — Tabla Editable</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#111827">
+  <style>
+    *{box-sizing:border-box;font-family:Arial, sans-serif;margin:0;padding:0}
+    body{background:#fff;color:#111;padding:20px;width:100%}
+    header{text-align:center;margin-bottom:16px}
+    h1{font-size:24px;font-weight:bold;margin-bottom:4px;text-align:center}
+    p.lead{color:#444;text-align:center;margin-bottom:16px}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
+    button{background:#111827;color:white;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+    button.danger{background:#ef4444}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
+    .chip{padding:8px 12px;border-radius:999px;border:1px solid #ccc;background:white;cursor:pointer}
+    .chip.active{background:#111827;color:white}
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
+    th,td{border:1px solid #ccc;padding:8px;text-align:center}
+    th{background:#f3f4f6}
+    td.left{text-align:left}
+    td[contenteditable="true"]{background:#fefce8}
+    .hint{text-align:center;font-size:13px;color:#666;margin-top:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Listado de Productos Sensitivos</h1>
+    <p class="lead">Formato editable por secciones</p>
+  </header>
+
+  <div class="controls">
+    <button id="btnAdd">Agregar</button>
+    <button id="btnExport">Generar PDF</button>
+    <button id="btnClear" class="danger">Borrar horarios</button>
+    <button id="btnDeleteRow" class="danger">Eliminar fila</button>
+  </div>
+
+  <div class="chips" id="chips"></div>
+
+  <table id="tabla">
+    <thead>
+      <tr>
+        <th style="width:12%">PRECIO</th>
+        <th class="left">PRODUCTO SENSITIVO</th>
+        <th style="width:10%">07:00</th>
+        <th style="width:10%">12:00</th>
+        <th style="width:10%">15:00</th>
+        <th style="width:10%">22:00</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  <div class="hint">Haz clic en cualquier celda para editar.</div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("✅ Service Worker registrado"))
+        .catch(err => console.log("❌ Error SW:", err));
+    }
+
+    (function(){
+      const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASILLO 1'];
+      const STORAGE_KEY = 'productos_sensitivos_por_seccion';
+      let productos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      let seccionActiva = DEFAULT_SECCIONES[0];
+      let insertIndex = null;
+
+      const tbody = document.getElementById('tbody');
+      const chipsEl = document.getElementById('chips');
+      const btnExport = document.getElementById('btnExport');
+      const btnClear = document.getElementById('btnClear');
+      const btnAdd = document.getElementById('btnAdd');
+      const btnDeleteRow = document.getElementById('btnDeleteRow');
+
+      function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(productos)); }
+
+      function renderChips(){
+        chipsEl.innerHTML='';
+        DEFAULT_SECCIONES.forEach(s=>{
+          const b=document.createElement('div');
+          b.className='chip'+(s===seccionActiva?' active':''); b.textContent=s;
+          b.onclick=()=>{seccionActiva=s; render();};
+          chipsEl.appendChild(b);
+        });
+      }
+
+      function render(){
+        renderChips();
+        tbody.innerHTML='';
+        const list = productos.filter(p=>p.seccion===seccionActiva);
+        if(!list.length){
+          const tr=document.createElement('tr');
+          tr.innerHTML='<td colspan=6 style="color:#666">Sin productos</td>';
+          tbody.appendChild(tr);
+          return;
+        }
+        list.forEach((p,i)=>{
+          const tr=document.createElement('tr');
+          tr.innerHTML=`
+            <td contenteditable="true" data-field="precio">${p.precio||''}</td>
+            <td class="left" contenteditable="true" data-field="nombre">${p.nombre||''}</td>
+            <td contenteditable="true" data-field="t0700">${p.t0700||''}</td>
+            <td contenteditable="true" data-field="t1200">${p.t1200||''}</td>
+            <td contenteditable="true" data-field="t1500">${p.t1500||''}</td>
+            <td contenteditable="true" data-field="t2200">${p.t2200||''}</td>`;
+          tr.querySelectorAll('[contenteditable]').forEach(td=>{
+            td.addEventListener('input',()=>{
+              const field=td.dataset.field;
+              const index=productos.indexOf(p);
+              productos[index][field]=td.innerText.trim();
+              save();
+            });
+          });
+          tr.addEventListener('click',()=>{ insertIndex = productos.indexOf(p); });
+          tbody.appendChild(tr);
+        });
+      }
+
+      btnAdd.onclick=()=>{
+        const nuevaFila = {seccion:seccionActiva,precio:'',nombre:'',t0700:'',t1200:'',t1500:'',t2200:''};
+        if(insertIndex!==null){ productos.splice(insertIndex+1,0,nuevaFila); insertIndex=null; }
+        else { productos.push(nuevaFila); }
+        save(); render();
+      };
+
+      btnDeleteRow.onclick=()=>{
+        if(insertIndex!==null){
+          if(confirm('¿Eliminar esta fila?')){
+            productos.splice(insertIndex,1); insertIndex=null; save(); render();
+          }
+        } else { alert('Selecciona primero una fila para eliminar.'); }
+      };
+
+      btnClear.onclick=()=>{
+        if(confirm('¿Borrar solo los horarios de esta sección?')){
+          productos = productos.map(p=>{
+            if(p.seccion===seccionActiva){ return {...p,t0700:'',t1200:'',t1500:'',t2200:''}; }
+            return p;
+          });
+          save(); render();
+        }
+      };
+
+      btnExport.onclick=()=>{
+        if(!productos.length){alert('No hay productos');return;}
+        let html = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
+        <style>body{font-family:Arial, sans-serif; padding:40px; text-align:center;}
+        h1{margin-bottom:0;}p{margin-top:4px;}h2{margin-top:40px;}
+        table{width:100%;border-collapse:collapse;margin-top:12px;}
+        th,td{border:1px solid #333;padding:6px;text-align:center;}th{background:#f0f0f0;}
+        .print-btn{margin-top:20px;padding:10px 16px;font-size:16px;background:#111827;color:#fff;border:none;border-radius:8px;cursor:pointer;}
+        </style></head><body>`;
+        const fecha=new Date().toLocaleDateString('es-ES',{year:'numeric',month:'2-digit',day:'2-digit'});
+        html += `<h1>Listado de Productos Sensitivos</h1><p>Fecha de exportación: ${fecha}</p>`;
+        const secciones=[...new Set(productos.map(p=>p.seccion))];
+        secciones.forEach(sec=>{
+          const rows=productos.filter(p=>p.seccion===sec);
+          if(rows.length){
+            html += `<h2>${sec}</h2><table><thead><tr><th>PRECIO</th><th>PRODUCTO SENSITIVO</th><th>07:00</th><th>12:00</th><th>15:00</th><th>22:00</th></tr></thead><tbody>`;
+            rows.forEach(r=>{
+              html += `<tr><td>${r.precio||''}</td><td>${r.nombre||''}</td><td>${r.t0700||''}</td><td>${r.t1200||''}</td><td>${r.t1500||''}</td><td>${r.t2200||''}</td></tr>`;
+            });
+            html += `</tbody></table>`;
+          }
+        });
+        html += `<button class='print-btn' onclick='window.print()'>Guardar como PDF</button>`;
+        html += `</body></html>`;
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(html);
+        printWindow.document.close(); printWindow.focus();
+      };
+      render();
+    })();
+  </script>
+</body>
+</html>

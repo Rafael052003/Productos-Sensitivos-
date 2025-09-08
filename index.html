@@ -7,80 +7,185 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#111827">
   <style>
-    *{box-sizing:border-box;font-family:Arial, sans-serif;margin:0;padding:0}
-    body{background:#fff;color:#111;padding:20px;width:100%}
+    /* Base */
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background:#f4f5f7;
+      color:#333;
+      padding:20px;
+      width:100%
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
 
-    /* Splash personalizado */
+    /* Splash */
     #splash {
       position:fixed;top:0;left:0;width:100%;height:100%;
-      background:#111827;color:#fff;display:flex;
+      background:#1f2937;color:#fff;display:flex;
       flex-direction:column;justify-content:center;align-items:center;
-      font-family:Arial,sans-serif;z-index:9999;
+      z-index:9999;
+      transition: opacity 0.5s ease-out;
     }
     #splash img{width:120px;margin-bottom:20px;}
+    #splash h2{font-weight:bold;font-size:24px;}
     #splash p{margin-top:10px;font-size:14px;opacity:0.8;}
 
-    header{text-align:center;margin-bottom:16px}
-    h1{font-size:20px;font-weight:bold;margin:2px 0;text-align:center}
-    p.lead{color:#444;text-align:center;margin-bottom:16px}
-    .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
-    button{background:#111827;color:white;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
+    /* Contenido principal */
+    header{text-align:center;margin-bottom:24px}
+    
+    /* Contenedor para agrupar y centrar los títulos */
+    .title-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    /* Estilo para los títulos */
+    .title-group h1{
+      font-size:20px;
+      font-weight:bold;
+      margin:2px 0;
+      color:#111827;
+      text-transform: uppercase;
+    }
+    .title-group h1:nth-child(3) {
+      white-space: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 2px;
+    }
+
+    @media (max-width: 600px) {
+      .title-group h1 {
+        font-size: 16px;
+      }
+      .title-group h1:nth-child(3) {
+        font-size: 14px;
+      }
+      body {
+        padding: 10px;
+      }
+    }
+
+
+    p.subtitle{font-size:1rem;color:#666;margin-top:4px;}
+    p.hint{font-size:0.875rem;color:#888;}
+    
+    .controls{
+      display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+      margin-bottom:20px;
+    }
+    button{
+      background:#111827;color:white;border:0;padding:12px 24px;
+      border-radius:999px;cursor:pointer;
+      font-weight:bold;
+      transition: all 0.2s ease-in-out;
+    }
+    button:hover{background:#374151;transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,0.1)}
     button.danger{background:#ef4444}
-    .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:12px}
-    .chip{padding:8px 12px;border-radius:999px;border:1px solid #ccc;background:white;cursor:pointer}
-    .chip.active{background:#111827;color:white}
-    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14px}
-    th,td{border:1px solid #ccc;padding:8px;text-align:center}
-    th{background:#f3f4f6}
+    button.danger:hover{background:#dc2626;transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,0.1)}
+
+    .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px}
+    .chip{
+      padding:8px 16px;border-radius:999px;cursor:pointer;
+      background:white;
+      box-shadow:0 1px 3px rgba(0,0,0,0.1);
+      transition: all 0.2s ease-in-out;
+    }
+    .chip:hover{transform:translateY(-2px);box-shadow:0 3px 6px rgba(0,0,0,0.15);}
+    .chip.active{
+      background:#111827;color:white;
+      box-shadow:0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    /* Estilo de la tabla corregido para alinear las columnas */
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:12px;
+      font-size:14px;
+      box-shadow: none;
+      background: white;
+      /* Eliminamos table-layout: fixed; para mayor flexibilidad */
+    }
+    th,td{border:1px solid #ccc;padding:8px;text-align:center;}
+    th{background:#f3f4f6;}
     td.left{text-align:left}
-    td[contenteditable="true"]{background:#fefce8}
-    input[type="number"]{width:100%;border:0;text-align:center;background:#fefce8;font-size:14px}
-    .hint{text-align:center;font-size:13px;color:#666;margin-top:8px}
+
+    /* Anchos de columna ajustados */
+    th:nth-child(1), td:nth-child(1){ width:12%; } /* PRECIO */
+    th:nth-child(2), td:nth-child(2){ width:auto; } /* PRODUCTO SENSITIVO - dejar que ocupe el espacio restante */
+    th:nth-child(3), td:nth-child(3){ width:15%; } /* 07:00 */
+    th:nth-child(4), td:nth-child(4){ width:15%; } /* 12:00 */
+    th:nth-child(5), td:nth-child(5){ width:15%; } /* 15:00 */
+    th:nth-child(6), td:nth-child(6){ width:15%; } /* 22:00 */
+
+    /* Asegurar que el input no se salga de la celda */
+    input[type="number"]{
+      width: calc(100% - 4px); /* Ajusta el ancho y considera un pequeño margen */
+      border:0;
+      text-align:center;
+      background:#fefce8;
+      font-size:14px;
+      padding: 2px; /* Pequeño padding para los números */
+    }
+
+    td[contenteditable="true"]{background:#fefce8;}
   </style>
 </head>
 <body>
-  <!-- Splash -->
   <div id="splash">
     <img src="icon-192.png" alt="Logo">
-    <h2>PRODUCTOS SENSITIVOS</h2>
+    <h2>Productos Sensitivos</h2>
     <p>Powered by Rafael Ramos</p>
-    <p>Versión 1.0</p>
   </div>
 
-  <header>
-    <h1>Grupo Riba Smith</h1>
-    <h1>R/S Chitré Selecto</h1>
-    <h1>Listado de Productos Sensitivos</h1>
-    <p class="lead">Formato editable por secciones</p>
-  </header>
+  <div class="container">
+    <header>
+      <div class="title-group">
+        <h1>GRUPO RIBA SMITH</h1>
+        <h1>R/S CHITRÉ SELECTO</h1>
+        <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
+      </div>
+      <p class="hint">Formato editable por secciones</p>
+    </header>
 
-  <div class="controls">
-    <button id="btnAdd">Agregar</button>
-    <button id="btnExport">Generar PDF</button>
-    <button id="btnClear" class="danger">Borrar horarios</button>
-    <button id="btnDeleteRow" class="danger">Eliminar fila</button>
+    <div class="controls">
+      <button id="btnAdd">Agregar</button>
+      <button id="btnExport">Generar PDF</button>
+      <button id="btnClear" class="danger">Borrar horarios</button>
+      <button id="btnDeleteRow" class="danger">Eliminar fila</button>
+    </div>
+
+    <div class="chips" id="chips"></div>
+
+    <table id="tabla">
+      <thead>
+        <tr>
+          <th>PRECIO</th>
+          <th class="left">PRODUCTO SENSITIVO</th>
+          <th>07:00</th>
+          <th>12:00</th>
+          <th>15:00</th>
+          <th>22:00</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="hint">Haz clic en cualquier celda para editar.</div>
   </div>
-
-  <div class="chips" id="chips"></div>
-
-  <table id="tabla">
-    <thead>
-      <tr>
-        <th style="width:12%">PRECIO</th>
-        <th class="left">PRODUCTO SENSITIVO</th>
-        <th style="width:10%">07:00</th>
-        <th style="width:10%">12:00</th>
-        <th style="width:10%">15:00</th>
-        <th style="width:10%">22:00</th>
-      </tr>
-    </thead>
-    <tbody id="tbody"></tbody>
-  </table>
-  <div class="hint">Haz clic en cualquier celda para editar.</div>
 
   <script>
     // Ocultar splash después de cargar
     window.addEventListener("load",()=>{
+      setTimeout(()=>{ document.getElementById("splash").style.opacity="0"; },1500);
       setTimeout(()=>{ document.getElementById("splash").style.display="none"; },2000);
     });
 
@@ -123,7 +228,7 @@
         const list = productos.filter(p=>p.seccion===seccionActiva);
         if(!list.length){
           const tr=document.createElement('tr');
-          tr.innerHTML='<td colspan=6 style="color:#666">Sin productos</td>';
+          tr.innerHTML='<td colspan=6 style="color:#666; text-align:center; border:none;">Sin productos en esta sección.</td>';
           tbody.appendChild(tr);
           return;
         }
@@ -190,12 +295,22 @@
         let html = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
         <style>body{font-family:Arial, sans-serif; padding:40px; text-align:center;}
         h1{margin:2px 0;} p{margin-top:4px;} h2{margin-top:40px;}
-        table{width:100%;border-collapse:collapse;margin-top:12px;}
+        table{width:100%;border-collapse:collapse;margin-top:12px; } /* Eliminamos table-layout: fixed; del PDF también */
         th,td{border:1px solid #333;padding:6px;text-align:center;}th{background:#f0f0f0;}
         .print-btn{margin-top:20px;padding:10px 16px;font-size:16px;background:#111827;color:#fff;border:none;border-radius:8px;cursor:pointer;}
+        @media print{.print-btn{display:none;}}
+
+        /* Anchos de columna para el PDF */
+        table th:nth-child(1), table td:nth-child(1){ width:12%; } /* PRECIO */
+        table th:nth-child(2), table td:nth-child(2){ width:40%; text-align: left;} /* PRODUCTO SENSITIVO */
+        table th:nth-child(3), table td:nth-child(3){ width:12%; } /* 07:00 */
+        table th:nth-child(4), table td:nth-child(4){ width:12%; } /* 12:00 */
+        table th:nth-child(5), table td:nth-child(5){ width:12%; } /* 15:00 */
+        table th:nth-child(6), table td:nth-child(6){ width:12%; } /* 22:00 */
+
         </style></head><body>`;
         const fecha=new Date().toLocaleDateString('es-ES',{year:'numeric',month:'2-digit',day:'2-digit'});
-        html += `<h1>Grupo Riba Smith</h1><h1>R/S Chitré Selecto</h1><h1>Listado de Productos Sensitivos</h1><p>Fecha de exportación: ${fecha}</p>`;
+        html += `<h1>GRUPO RIBA SMITH</h1><h1>R/S CHITRÉ SELECTO</h1><h1>LISTADO DE PRODUCTOS SENSITIVOS</h1><p>Fecha de exportación: ${fecha}</p>`;
         const secciones=[...new Set(productos.map(p=>p.seccion))];
         secciones.forEach(sec=>{
           const rows=productos.filter(p=>p.seccion===sec);

@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Productos Sensitivos — Tabla Editable</title>
+  <title>Grupo Riba Smith — R/S Chitré Selecto — Productos Sensitivos</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#111827">
   <style>
     *{box-sizing:border-box;font-family:Arial, sans-serif;margin:0;padding:0}
     body{background:#fff;color:#111;padding:20px;width:100%}
     header{text-align:center;margin-bottom:16px}
-    h1{font-size:24px;font-weight:bold;margin-bottom:4px;text-align:center}
+    h1{font-size:20px;font-weight:bold;margin:2px 0;text-align:center}
     p.lead{color:#444;text-align:center;margin-bottom:16px}
     .controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:12px}
     button{background:#111827;color:white;border:0;padding:10px 12px;border-radius:8px;cursor:pointer}
@@ -23,11 +23,14 @@
     th{background:#f3f4f6}
     td.left{text-align:left}
     td[contenteditable="true"]{background:#fefce8}
+    input[type="number"]{width:100%;border:0;text-align:center;background:#fefce8;font-size:14px}
     .hint{text-align:center;font-size:13px;color:#666;margin-top:8px}
   </style>
 </head>
 <body>
   <header>
+    <h1>Grupo Riba Smith</h1>
+    <h1>R/S Chitré Selecto</h1>
     <h1>Listado de Productos Sensitivos</h1>
     <p class="lead">Formato editable por secciones</p>
   </header>
@@ -54,7 +57,7 @@
     </thead>
     <tbody id="tbody"></tbody>
   </table>
-  <div class="hint">Haz clic en cualquier celda para editar. powered by Rafael Ramos .</div>
+  <div class="hint">Haz clic en cualquier celda para editar.</div>
 
   <script>
     if ('serviceWorker' in navigator) {
@@ -83,7 +86,8 @@
         chipsEl.innerHTML='';
         DEFAULT_SECCIONES.forEach(s=>{
           const b=document.createElement('div');
-          b.className='chip'+(s===seccionActiva?' active':''); b.textContent=s;
+          b.className='chip'+(s===seccionActiva?' active':''); 
+          b.textContent=s;
           b.onclick=()=>{seccionActiva=s; render();};
           chipsEl.appendChild(b);
         });
@@ -104,10 +108,11 @@
           tr.innerHTML=`
             <td contenteditable="true" data-field="precio">${p.precio||''}</td>
             <td class="left" contenteditable="true" data-field="nombre">${p.nombre||''}</td>
-            <td contenteditable="true" data-field="t0700">${p.t0700||''}</td>
-            <td contenteditable="true" data-field="t1200">${p.t1200||''}</td>
-            <td contenteditable="true" data-field="t1500">${p.t1500||''}</td>
-            <td contenteditable="true" data-field="t2200">${p.t2200||''}</td>`;
+            <td><input type="number" data-field="t0700" value="${p.t0700||''}"></td>
+            <td><input type="number" data-field="t1200" value="${p.t1200||''}"></td>
+            <td><input type="number" data-field="t1500" value="${p.t1500||''}"></td>
+            <td><input type="number" data-field="t2200" value="${p.t2200||''}"></td>`;
+          
           tr.querySelectorAll('[contenteditable]').forEach(td=>{
             td.addEventListener('input',()=>{
               const field=td.dataset.field;
@@ -116,6 +121,16 @@
               save();
             });
           });
+
+          tr.querySelectorAll('input').forEach(inp=>{
+            inp.addEventListener('input',()=>{
+              const field=inp.dataset.field;
+              const index=productos.indexOf(p);
+              productos[index][field]=inp.value.trim();
+              save();
+            });
+          });
+
           tr.addEventListener('click',()=>{ insertIndex = productos.indexOf(p); });
           tbody.appendChild(tr);
         });
@@ -150,13 +165,13 @@
         if(!productos.length){alert('No hay productos');return;}
         let html = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
         <style>body{font-family:Arial, sans-serif; padding:40px; text-align:center;}
-        h1{margin-bottom:0;}p{margin-top:4px;}h2{margin-top:40px;}
+        h1{margin:2px 0;} p{margin-top:4px;} h2{margin-top:40px;}
         table{width:100%;border-collapse:collapse;margin-top:12px;}
         th,td{border:1px solid #333;padding:6px;text-align:center;}th{background:#f0f0f0;}
         .print-btn{margin-top:20px;padding:10px 16px;font-size:16px;background:#111827;color:#fff;border:none;border-radius:8px;cursor:pointer;}
         </style></head><body>`;
         const fecha=new Date().toLocaleDateString('es-ES',{year:'numeric',month:'2-digit',day:'2-digit'});
-        html += `<h1>Listado de Productos Sensitivos</h1><p>Fecha de exportación: ${fecha}</p>`;
+        html += `<h1>Grupo Riba Smith</h1><h1>R/S Chitré Selecto</h1><h1>Listado de Productos Sensitivos</h1><p>Fecha de exportación: ${fecha}</p>`;
         const secciones=[...new Set(productos.map(p=>p.seccion))];
         secciones.forEach(sec=>{
           const rows=productos.filter(p=>p.seccion===sec);

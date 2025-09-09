@@ -336,8 +336,8 @@
             }
         });
 
-        const pdfDataUri = doc.output('datauristring');
-        window.open(pdfDataUri, '_blank');
+        // La modificación es aquí
+        doc.save('Listado_Productos_Sensitivos.pdf');
       };
 
       render();

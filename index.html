@@ -5,6 +5,12 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Grupo Riba Smith — R/S Chitré Selecto — Productos Sensitivos</title>
   <meta name="theme-color" content="#1f2937">
+  
+  <!-- Manifest para PWA -->
+  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlByb2R1Y3RvcyBTZW5zaXRpdm9zIiwKICAic2hvcnRfbmFtZSI6ICJQcm9kLiBTZW5zaXRpdm9zIiwKICAiZGVzY3JpcHRpb24iOiAiQ29udHJvbCBkZSBwcm9kdWN0b3Mgc2Vuc2l0aXZvcyBkZSBHcnVwbyBSaWJhIFNtaXRoIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxMTE4MjciLAogICJ0aGVtZV9jb2xvciI6ICIjMTEyYTQ5IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaWNvbi0xOTIucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogImljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfQogIF0KfQ==">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -19,6 +25,7 @@
       --secondary-color: #374151;
       --bg-light: #f4f5f7;
       --accent-green: #0A7456;
+      --accent-blue: #3B82F6;
       --accent-red: #E34F4F;
       --highlight-yellow: #fff2b0;
       --highlight-green: #d4edda;
@@ -65,6 +72,8 @@
     .action-btn.danger:hover { background: #dc2626; }
     .action-btn.green { background: var(--accent-green); }
     .action-btn.green:hover { background: #08664b; }
+    .action-btn.blue { background: var(--accent-blue); }
+    .action-btn.blue:hover { background: #2563eb; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
     .chip {
@@ -113,6 +122,26 @@
     .toast.warning { background-color: #ff9800; }
     .toast.error { background-color: var(--accent-red); }
     @keyframes slideIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+    
+    /* Botón de instalación */
+    #installButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent-blue);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
     
     /* Estilos para el PDF/Impresión */
     @media print {
@@ -170,10 +199,10 @@
 </head>
 <body>
   <div id="splash">
-    <img src="icon-192.png" alt="Logo">
+    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1MCIgZmlsbD0iIzExMTgyNyIvPjx0ZXh0IHg9IjYwIiB5PSI2NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UlM8L3RleHQ+PC9zdmc+" alt="Logo">
     <h2>PRODUCTOS SENSITIVOS</h2>
     <p>Powered by Rafael Ramos</p>
-    <p>Versión 1.0</p>
+    <p>Versión 1.1</p>
   </div>
 
   <div class="container">
@@ -191,6 +220,7 @@
 
     <div class="actions">
       <button id="btnAdd" class="action-btn"><i class="fas fa-plus"></i> Agregar Fila</button>
+      <button id="btnSave" class="action-btn blue"><i class="fas fa-save"></i> Guardar</button>
       <button id="btnExport" class="action-btn green"><i class="fas fa-file-pdf"></i> Generar PDF</button>
       <button id="btnClear" class="action-btn danger"><i class="fas fa-eraser"></i> Borrar Horarios</button>
       <button id="btnDeleteRow" class="action-btn danger"><i class="fas fa-trash-alt"></i> Eliminar Fila</button>
@@ -215,6 +245,11 @@
     <div id="toast" class="toast-container"></div>
   </div>
 
+  <!-- Botón de instalación -->
+  <button id="installButton" title="Instalar aplicación">
+    <i class="fas fa-download"></i>
+  </button>
+
   <script>
     (function () {
       const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASILLO 1'];
@@ -223,18 +258,52 @@
       let seccionActiva = DEFAULT_SECCIONES[0];
       let insertIndex = null;
       let selectedRow = null;
+      let deferredPrompt;
 
       const tbody = document.getElementById('tbody');
       const chipsEl = document.getElementById('chips');
+      const btnSave = document.getElementById('btnSave');
       const btnExport = document.getElementById('btnExport');
       const btnClear = document.getElementById('btnClear');
       const btnAdd = document.getElementById('btnAdd');
       const btnDeleteRow = document.getElementById('btnDeleteRow');
+      const installButton = document.getElementById('installButton');
       const toastContainer = document.getElementById('toast');
 
       window.addEventListener("load", () => {
         setTimeout(() => { document.getElementById("splash").style.opacity = "0"; }, 1500);
         setTimeout(() => { document.getElementById("splash").style.display = "none"; }, 2000);
+        
+        // Registrar service worker
+        if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('data:application/javascript;base64,KGZ1bmN0aW9uKCkgewogICdzZXJ2aWNlV29ya2VyJyBpbiBuYXZpZ2F0b3IgJiYgbmF2aWdhdG9yLnNlcnZpY2VXb3JrZXIucmVnaXN0ZXIoJy8nLCB7IHNjb3BlOiAnLycgfSkKfSkoKTs=');
+        }
+      });
+
+      // Eventos para la instalación de PWA
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installButton.style.display = 'flex';
+      });
+
+      installButton.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+          showToast('Aplicación instalada', 'success');
+          installButton.style.display = 'none';
+        }
+        
+        deferredPrompt = null;
+      });
+
+      window.addEventListener('appinstalled', () => {
+        installButton.style.display = 'none';
+        deferredPrompt = null;
       });
 
       function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(productos)); }
@@ -318,6 +387,12 @@
           tbody.appendChild(tr);
         });
       }
+
+      // Evento para el botón de guardar
+      btnSave.onclick = () => {
+        save();
+        showToast('Datos guardados correctamente.', 'success');
+      };
 
       btnAdd.onclick=()=>{const f={seccion:seccionActiva,precio:'',nombre:'',t0700:'',t1200:'',t1500:'',t2200:''};
         if(insertIndex!==null){productos.splice(insertIndex+1,0,f);showToast('Fila agregada.','success');}

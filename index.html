@@ -113,12 +113,12 @@
     .toast.warning { background-color: #ff9800; }
     .toast.error { background-color: var(--accent-red); }
     @keyframes slideIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
-
+    
     /* Estilos para el PDF/Impresión */
     @media print {
       @page { margin: 10mm; }
       body { padding: 0; font-family: 'Poppins', sans-serif; font-size: 12pt; }
-      .container, header, .controls, .chips { display: none; }
+      .container, header, .controls, .chips, .actions { display: none; }
       .printable-content { display: block !important; }
       .page-break { page-break-before: always; }
 
@@ -217,7 +217,7 @@
 
   <script>
     (function () {
-      const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASTILLO 1'];
+      const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASILLO 1'];
       const STORAGE_KEY = 'productos_sensitivos_por_seccion';
       let productos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       let seccionActiva = DEFAULT_SECCIONES[0];
@@ -281,13 +281,11 @@
               
               const currentValue = parseFloat(targetInput.value);
               const prevInput = currentRowInputs[currentIndex - 1];
-              const prevValue = prevInput ? parseFloat(prevInput.value) : -1;
+              const prevValue = prevInput ? parseFloat(prevInput.value) : NaN;
 
               targetInput.classList.remove('initial-highlight', 'increased', 'decreased');
 
-              if (currentIndex === 0 && targetInput.value.trim() !== '') {
-                  targetInput.classList.add('initial-highlight');
-              } else if (!isNaN(currentValue) && !isNaN(prevValue) && prevValue !== -1 && prevValue !== 0) {
+              if (currentIndex > 0 && !isNaN(currentValue) && !isNaN(prevValue) && prevValue !== 0) {
                   if (currentValue < prevValue) {
                       targetInput.classList.add('decreased');
                       showToast('¡Advertencia! Diferencia detectada.','warning');
@@ -297,7 +295,7 @@
               }
           };
 
-          tr.querySelectorAll('input[type="number"]').forEach((inp) => {
+          tr.querySelectorAll('input[type="number"]').forEach((inp, idx) => {
             inp.addEventListener('input', () => {
               const index = productos.indexOf(p);
               const field = inp.dataset.field;
@@ -331,23 +329,26 @@
 
       btnClear.onclick=()=>{if(confirm('¿Borrar horarios de la sección?')){productos=productos.map(p=>p.seccion===seccionActiva?{...p,t0700:'',t1200:'',t1500:'',t2200:''}:p);save();render();showToast('Horarios borrados.','success');}};
 
-      btnExport.onclick=()=>{
-        if(!productos.length){showToast('No hay productos para exportar.', 'warning');return;}
+      btnExport.onclick = () => {
+        if (!productos.length) {
+          showToast('No hay productos para exportar.', 'warning');
+          return;
+        }
 
         const getPdfCellClass = (currentValue, prevValue, isFirstColumn) => {
-            const numCurrent = parseFloat(currentValue);
-            const numPrev = parseFloat(prevValue);
+          const numCurrent = parseFloat(currentValue);
+          const numPrev = parseFloat(prevValue);
 
-            if (isFirstColumn && currentValue.trim() !== '') {
-                return 'initial-highlight';
-            } else if (!isNaN(numCurrent) && !isNaN(numPrev) && prevValue !== '') {
-                if (numCurrent < numPrev) {
-                    return 'decreased';
-                } else if (currentValue > prevValue) {
-                    return 'increased';
-                }
-            }
+          if (isFirstColumn) {
             return '';
+          } else if (!isNaN(numCurrent) && !isNaN(numPrev) && prevValue !== '') {
+            if (numCurrent < numPrev) {
+              return 'decreased';
+            } else if (currentValue > numPrev) {
+              return 'increased';
+            }
+          }
+          return '';
         };
 
         let html = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
@@ -409,7 +410,7 @@
         html += `<p>Fecha de exportación: ${new Date().toLocaleDateString('es-ES')}</p>`;
         html += `</div>`;
 
-        const secciones = ['PASILLO 6', 'MEDICAMENTOS', 'CAVA', 'PASTILLAS CANINAS', 'PASTILLO 1'];
+        const secciones = ['PASILLO 6', 'MEDICAMENTOS', 'CAVA', 'PASTILLAS CANINAS', 'PASILLO 1'];
 
         secciones.forEach((sec, index) => {
             const rows = productos.filter(p => p.seccion === sec);

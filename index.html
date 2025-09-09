@@ -1,148 +1,114 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Grupo Riba Smith — R/S Chitré Selecto — Productos Sensitivos</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#111827">
+  <meta name="theme-color" content="#1f2937">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <style>
-    /* Base */
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background:#f4f5f7;
-      color:#333;
-      padding:20px;
-      width:100%
+    :root {
+      --primary-color: #111827;
+      --secondary-color: #374151;
+      --bg-light: #f4f5f7;
+      --accent-green: #0A7456;
+      --accent-red: #E34F4F;
+      --highlight-yellow: #fff2b0;
+      --highlight-green: #d4edda;
+      --highlight-red: #f8d7da;
     }
-    .container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 0;
-      border-radius: 0;
-      box-shadow: none;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg-light);
+      color: var(--primary-color);
+      padding: 20px;
     }
+    .container { max-width: 960px; margin: 0 auto; }
 
     /* Splash */
     #splash {
-      position:fixed;top:0;left:0;width:100%;height:100%;
-      background:#1f2937;color:#fff;display:flex;
-      flex-direction:column;justify-content:center;align-items:center;
-      z-index:9999;
-      transition: opacity 0.5s ease-out;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--primary-color); color: #fff;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 9999; transition: opacity 0.5s ease-out;
     }
-    #splash img{width:120px;margin-bottom:20px;}
-    #splash h2{font-weight:bold;font-size:24px;}
-    #splash p{margin-top:10px;font-size:14px;opacity:0.8;}
+    #splash img { width: 120px; margin-bottom: 20px; }
+    #splash h2 { font-weight: bold; font-size: 24px; margin-bottom: 10px; }
+    #splash p { margin-top: 5px; font-size: 14px; opacity: 0.9; }
 
-    /* Contenido principal */
-    header{text-align:center;margin-bottom:24px}
-    
-    /* Contenedor para agrupar y centrar los títulos */
-    .title-group {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-bottom: 20px;
+    header { text-align: center; margin-bottom: 24px; }
+    .title-group { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+    .title-group h1 {
+      font-size: 24px; font-weight: 700; margin: 2px 0;
+      color: var(--primary-color); text-transform: uppercase;
     }
+    @media (max-width: 600px) { .title-group h1 { font-size: 18px; } }
 
-    /* Estilo para los títulos */
-    .title-group h1{
-      font-size:20px;
-      font-weight:bold;
-      margin:2px 0;
-      color:#111827;
-      text-transform: uppercase;
+    .controls-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+    .actions {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 20px;
     }
-    .title-group h1:nth-child(3) {
-      white-space: nowrap;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: 2px;
+    .action-btn {
+      background: var(--primary-color); color: white; border: 0;
+      padding: 12px 24px; border-radius: 999px; cursor: pointer; font-weight: 600;
+      transition: all 0.2s ease-in-out; display: flex; align-items: center; gap: 8px;
     }
+    .action-btn:hover { background: var(--secondary-color); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .action-btn.danger { background: var(--accent-red); }
+    .action-btn.danger:hover { background: #dc2626; }
 
-    @media (max-width: 600px) {
-      .title-group h1 {
-        font-size: 16px;
-      }
-      .title-group h1:nth-child(3) {
-        font-size: 14px;
-      }
-      body {
-        padding: 10px;
-      }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .chip {
+      padding: 8px 16px; border-radius: 999px; cursor: pointer;
+      background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: all 0.2s ease-in-out; font-size: 14px;
     }
+    .chip:hover { transform: translateY(-2px); box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
+    .chip.active { background: var(--primary-color); color: white; }
 
+    .table-container { overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 8px; }
+    table {
+      width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px;
+      background: white; border-radius: 8px; overflow: hidden;
+    }
+    th, td { border: 1px solid #e5e7eb; padding: 12px; text-align: center; }
+    th { background: #f3f4f6; font-weight: 600; white-space: nowrap; }
+    td.left { text-align: left; }
+    th.product-sensitive { white-space: normal; line-height: 1.2; }
+    input[type="number"] {
+      width: 100%; border: 0; text-align: center; background: transparent;
+      font-size: 14px; padding: 2px; outline: none; transition: background-color 0.3s;
+    }
+    td[contenteditable="true"] { background: #fefce8; }
 
-    p.subtitle{font-size:1rem;color:#666;margin-top:4px;}
-    p.hint{font-size:0.875rem;color:#888;}
-    
-    .controls{
-      display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
-      margin-bottom:20px;
-    }
-    button{
-      background:#111827;color:white;border:0;padding:12px 24px;
-      border-radius:999px;cursor:pointer;
-      font-weight:bold;
-      transition: all 0.2s ease-in-out;
-    }
-    button:hover{background:#374151;transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,0.1)}
-    button.danger{background:#ef4444}
-    button.danger:hover{background:#dc2626;transform:translateY(-2px);box-shadow:0 4px 6px rgba(0,0,0,0.1)}
+    .selected-row { background-color: #e0f7fa !important; }
+    .initial-highlight { background-color: var(--highlight-yellow) !important; }
+    .increased { background-color: var(--highlight-green) !important; }
+    .decreased { background-color: var(--highlight-red) !important; }
 
-    .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:20px}
-    .chip{
-      padding:8px 16px;border-radius:999px;cursor:pointer;
-      background:white;
-      box-shadow:0 1px 3px rgba(0,0,0,0.1);
-      transition: all 0.2s ease-in-out;
+    .toast-container {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column-reverse; gap: 10px; z-index: 1000;
     }
-    .chip:hover{transform:translateY(-2px);box-shadow:0 3px 6px rgba(0,0,0,0.15);}
-    .chip.active{
-      background:#111827;color:white;
-      box-shadow:0 2px 4px rgba(0,0,0,0.2);
+    .toast {
+      padding: 12px 20px; border-radius: 8px; color: white; font-weight: 600;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px);
+      animation: slideIn 0.5s forwards;
     }
-    
-    /* Estilo de la tabla corregido para alinear las columnas */
-    table{
-      width:100%;
-      border-collapse:collapse;
-      margin-top:12px;
-      font-size:14px;
-      box-shadow: none;
-      background: white;
-      /* Eliminamos table-layout: fixed; para mayor flexibilidad */
-    }
-    th,td{border:1px solid #ccc;padding:8px;text-align:center;}
-    th{background:#f3f4f6;}
-    td.left{text-align:left}
-
-    /* Anchos de columna ajustados */
-    th:nth-child(1), td:nth-child(1){ width:12%; } /* PRECIO */
-    th:nth-child(2), td:nth-child(2){ width:auto; } /* PRODUCTO SENSITIVO - dejar que ocupe el espacio restante */
-    th:nth-child(3), td:nth-child(3){ width:15%; } /* 07:00 */
-    th:nth-child(4), td:nth-child(4){ width:15%; } /* 12:00 */
-    th:nth-child(5), td:nth-child(5){ width:15%; } /* 15:00 */
-    th:nth-child(6), td:nth-child(6){ width:15%; } /* 22:00 */
-
-    /* Asegurar que el input no se salga de la celda */
-    input[type="number"]{
-      width: calc(100% - 4px); /* Ajusta el ancho y considera un pequeño margen */
-      border:0;
-      text-align:center;
-      background:#fefce8;
-      font-size:14px;
-      padding: 2px; /* Pequeño padding para los números */
-    }
-
-    td[contenteditable="true"]{background:#fefce8;}
+    .toast.success { background-color: var(--accent-green); }
+    .toast.warning { background-color: #ff9800; }
+    .toast.error { background-color: var(--accent-red); }
+    @keyframes slideIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
   </style>
 </head>
 <body>
   <div id="splash">
-    <img src="icon-512.png" alt="Logo">
+    <img src="icon-192.png" alt="Logo">
     <h2>PRODUCTOS SENSITIVOS</h2>
     <p>Powered by Rafael Ramos</p>
     <p>Versión 1.0</p>
@@ -155,53 +121,46 @@
         <h1>R/S CHITRÉ SELECTO</h1>
         <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
       </div>
-      <p class="hint">Formato editable por secciones</p>
     </header>
 
-    <div class="controls">
-      <button id="btnAdd">Agregar</button>
-      <button id="btnExport">Generar PDF</button>
-      <button id="btnClear" class="danger">Borrar horarios</button>
-      <button id="btnDeleteRow" class="danger">Eliminar fila</button>
+    <div class="controls-container">
+      <div class="chips" id="chips"></div>
     </div>
 
-    <div class="chips" id="chips"></div>
+    <div class="actions">
+      <button id="btnAdd" class="action-btn"><i class="fas fa-plus"></i> Agregar Fila</button>
+      <button id="btnExport" class="action-btn"><i class="fas fa-file-pdf"></i> Generar PDF</button>
+      <button id="btnClear" class="action-btn danger"><i class="fas fa-eraser"></i> Borrar Horarios</button>
+      <button id="btnDeleteRow" class="action-btn danger"><i class="fas fa-trash-alt"></i> Eliminar Fila</button>
+    </div>
 
-    <table id="tabla">
-      <thead>
-        <tr>
-          <th>PRECIO</th>
-          <th class="left">PRODUCTO SENSITIVO</th>
-          <th>07:00</th>
-          <th>12:00</th>
-          <th>15:00</th>
-          <th>22:00</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
-    <div class="hint">Haz clic en cualquier celda para editar.</div>
+    <div class="table-container">
+      <table id="tabla">
+        <thead>
+          <tr>
+            <th>PRECIO</th>
+            <th class="left product-sensitive">PRODUCTO<br>SENSITIVO</th>
+            <th>07:00</th>
+            <th>12:00</th>
+            <th>15:00</th>
+            <th>22:00</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+
+    <div id="toast" class="toast-container"></div>
   </div>
 
   <script>
-    // Ocultar splash después de cargar
-    window.addEventListener("load",()=>{
-      setTimeout(()=>{ document.getElementById("splash").style.opacity="0"; },2500);
-      setTimeout(()=>{ document.getElementById("splash").style.display="none"; },3000);
-    });
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js')
-        .then(() => console.log("✅ Service Worker registrado"))
-        .catch(err => console.log("❌ Error SW:", err));
-    }
-
-    (function(){
-      const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASILLO 1'];
+    (function () {
+      const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASTILLO 1'];
       const STORAGE_KEY = 'productos_sensitivos_por_seccion';
       let productos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       let seccionActiva = DEFAULT_SECCIONES[0];
       let insertIndex = null;
+      let selectedRow = null;
 
       const tbody = document.getElementById('tbody');
       const chipsEl = document.getElementById('chips');
@@ -209,31 +168,33 @@
       const btnClear = document.getElementById('btnClear');
       const btnAdd = document.getElementById('btnAdd');
       const btnDeleteRow = document.getElementById('btnDeleteRow');
+      const toastContainer = document.getElementById('toast');
+
+      // Ocultar splash
+      window.addEventListener("load", () => {
+        setTimeout(() => { document.getElementById("splash").style.opacity = "0"; }, 1500);
+        setTimeout(() => { document.getElementById("splash").style.display = "none"; }, 2000);
+      });
 
       function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(productos)); }
+      function showToast(msg,type='success'){
+        const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;toastContainer.appendChild(t);
+        setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(20px)';setTimeout(()=>t.remove(),500);},2000); // ⏱️ ahora 2s
+      }
 
       function renderChips(){
-        chipsEl.innerHTML='';
-        DEFAULT_SECCIONES.forEach(s=>{
+        chipsEl.innerHTML='';DEFAULT_SECCIONES.forEach(s=>{
           const b=document.createElement('div');
-          b.className='chip'+(s===seccionActiva?' active':''); 
-          b.textContent=s;
-          b.onclick=()=>{seccionActiva=s; render();};
-          chipsEl.appendChild(b);
+          b.className='chip'+(s===seccionActiva?' active':'');b.textContent=s;
+          b.onclick=()=>{seccionActiva=s;render();};chipsEl.appendChild(b);
         });
       }
 
       function render(){
-        renderChips();
-        tbody.innerHTML='';
-        const list = productos.filter(p=>p.seccion===seccionActiva);
-        if(!list.length){
-          const tr=document.createElement('tr');
-          tr.innerHTML='<td colspan=6 style="color:#666; text-align:center; border:none;">Sin productos en esta sección.</td>';
-          tbody.appendChild(tr);
-          return;
-        }
-        list.forEach((p,i)=>{
+        renderChips();tbody.innerHTML='';selectedRow=null;insertIndex=null;
+        const list=productos.filter(p=>p.seccion===seccionActiva);
+        if(!list.length){tbody.innerHTML='<tr><td colspan=6 style="color:#666;text-align:center;padding:20px;">Sin productos en esta sección.</td></tr>';return;}
+        list.forEach((p)=>{
           const tr=document.createElement('tr');
           tr.innerHTML=`
             <td contenteditable="true" data-field="precio">${p.precio||''}</td>
@@ -241,94 +202,43 @@
             <td><input type="number" data-field="t0700" value="${p.t0700||''}"></td>
             <td><input type="number" data-field="t1200" value="${p.t1200||''}"></td>
             <td><input type="number" data-field="t1500" value="${p.t1500||''}"></td>
-            <td><input type="number" data-field="t2200" value="${p.t2200||''}"></td>`;
-          
-          tr.querySelectorAll('[contenteditable]').forEach(td=>{
-            td.addEventListener('input',()=>{
-              const field=td.dataset.field;
-              const index=productos.indexOf(p);
-              productos[index][field]=td.innerText.trim();
-              save();
-            });
-          });
-
-          tr.querySelectorAll('input').forEach(inp=>{
+            <td><input type="number" data-field="t2200" value="${p.t2200||''}"></td>
+          `;
+          const inputs=tr.querySelectorAll('input[type="number"]');
+          inputs.forEach(inp=>{
             inp.addEventListener('input',()=>{
-              const field=inp.dataset.field;
-              const index=productos.indexOf(p);
-              productos[index][field]=inp.value.trim();
-              save();
+              const idx=productos.indexOf(p);productos[idx][inp.dataset.field]=inp.value.trim();save();applyColorLogic(inp);
             });
           });
-
-          tr.addEventListener('click',()=>{ insertIndex = productos.indexOf(p); });
+          tr.addEventListener('click',()=>{if(selectedRow)selectedRow.classList.remove('selected-row');selectedRow=tr;selectedRow.classList.add('selected-row');insertIndex=productos.indexOf(p);});
           tbody.appendChild(tr);
         });
       }
 
-      btnAdd.onclick=()=>{
-        const nuevaFila = {seccion:seccionActiva,precio:'',nombre:'',t0700:'',t1200:'',t1500:'',t2200:''};
-        if(insertIndex!==null){ productos.splice(insertIndex+1,0,nuevaFila); insertIndex=null; }
-        else { productos.push(nuevaFila); }
-        save(); render();
-      };
-
-      btnDeleteRow.onclick=()=>{
-        if(insertIndex!==null){
-          if(confirm('¿Eliminar esta fila?')){
-            productos.splice(insertIndex,1); insertIndex=null; save(); render();
-          }
-        } else { alert('Selecciona primero una fila para eliminar.'); }
-      };
-
-      btnClear.onclick=()=>{
-        if(confirm('¿Borrar solo los horarios de esta sección?')){
-          productos = productos.map(p=>{
-            if(p.seccion===seccionActiva){ return {...p,t0700:'',t1200:'',t1500:'',t2200:''}; }
-            return p;
-          });
-          save(); render();
+      function applyColorLogic(inp){
+        const rowInputs=Array.from(inp.closest('tr').querySelectorAll('input'));
+        const idx=rowInputs.indexOf(inp);
+        const val=parseFloat(inp.value);const prevVal=idx>0?parseFloat(rowInputs[idx-1].value):NaN;
+        inp.classList.remove('initial-highlight','increased','decreased');
+        if(idx===0&&inp.value.trim()!==''){inp.classList.add('initial-highlight');}
+        else if(!isNaN(val)&&!isNaN(prevVal)&&prevVal!==0){
+          if(val<prevVal){inp.classList.add('decreased');showToast('¡Advertencia! Diferencia detectada.','warning');}
+          else if(val>prevVal){inp.classList.add('increased');}
         }
-      };
+      }
 
-      btnExport.onclick=()=>{
-        if(!productos.length){alert('No hay productos');return;}
-        let html = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
-        <style>body{font-family:Arial, sans-serif; padding:40px; text-align:center;}
-        h1{margin:2px 0;} p{margin-top:4px;} h2{margin-top:40px;}
-        table{width:100%;border-collapse:collapse;margin-top:12px; } /* Eliminamos table-layout: fixed; del PDF también */
-        th,td{border:1px solid #333;padding:6px;text-align:center;}th{background:#f0f0f0;}
-        .print-btn{margin-top:20px;padding:10px 16px;font-size:16px;background:#111827;color:#fff;border:none;border-radius:8px;cursor:pointer;}
-        @media print{.print-btn{display:none;}}
+      btnAdd.onclick=()=>{const f={seccion:seccionActiva,precio:'',nombre:'',t0700:'',t1200:'',t1500:'',t2200:''};
+        if(insertIndex!==null){productos.splice(insertIndex+1,0,f);showToast('Fila agregada.','success');}
+        else{productos.push(f);showToast('Fila agregada al final.','success');}
+        save();render();};
 
-        /* Anchos de columna para el PDF */
-        table th:nth-child(1), table td:nth-child(1){ width:12%; } /* PRECIO */
-        table th:nth-child(2), table td:nth-child(2){ width:40%; text-align: left;} /* PRODUCTO SENSITIVO */
-        table th:nth-child(3), table td:nth-child(3){ width:12%; } /* 07:00 */
-        table th:nth-child(4), table td:nth-child(4){ width:12%; } /* 12:00 */
-        table th:nth-child(5), table td:nth-child(5){ width:12%; } /* 15:00 */
-        table th:nth-child(6), table td:nth-child(6){ width:12%; } /* 22:00 */
+      btnDeleteRow.onclick=()=>{if(insertIndex!==null){if(confirm('¿Eliminar esta fila?')){productos.splice(insertIndex,1);save();render();showToast('Fila eliminada.','success');}}
+        else{showToast('Selecciona una fila.','error');}};
 
-        </style></head><body>`;
-        const fecha=new Date().toLocaleDateString('es-ES',{year:'numeric',month:'2-digit',day:'2-digit'});
-        html += `<h1>GRUPO RIBA SMITH</h1><h1>R/S CHITRÉ SELECTO</h1><h1>LISTADO DE PRODUCTOS SENSITIVOS</h1><p>Fecha de exportación: ${fecha}</p>`;
-        const secciones=[...new Set(productos.map(p=>p.seccion))];
-        secciones.forEach(sec=>{
-          const rows=productos.filter(p=>p.seccion===sec);
-          if(rows.length){
-            html += `<h2>${sec}</h2><table><thead><tr><th>PRECIO</th><th>PRODUCTO SENSITIVO</th><th>07:00</th><th>12:00</th><th>15:00</th><th>22:00</th></tr></thead><tbody>`;
-            rows.forEach(r=>{
-              html += `<tr><td>${r.precio||''}</td><td>${r.nombre||''}</td><td>${r.t0700||''}</td><td>${r.t1200||''}</td><td>${r.t1500||''}</td><td>${r.t2200||''}</td></tr>`;
-            });
-            html += `</tbody></table>`;
-          }
-        });
-        html += `<button class='print-btn' onclick='window.print()'>Guardar como PDF</button>`;
-        html += `</body></html>`;
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(html);
-        printWindow.document.close(); printWindow.focus();
-      };
+      btnClear.onclick=()=>{if(confirm('¿Borrar horarios de la sección?')){productos=productos.map(p=>p.seccion===seccionActiva?{...p,t0700:'',t1200:'',t1500:'',t2200:''}:p);save();render();showToast('Horarios borrados.','success');}};
+
+      btnExport.onclick=()=>{if(!productos.length){showToast('No hay productos.','warning');return;}window.print();};
+
       render();
     })();
   </script>

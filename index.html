@@ -5,19 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Grupo Riba Smith — R/S Chitré Selecto — Productos Sensitivos</title>
   <meta name="theme-color" content="#1f2937">
-  
-  <!-- Manifest para PWA -->
-  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIlByb2R1Y3RvcyBTZW5zaXRpdm9zIiwKICAic2hvcnRfbmFtZSI6ICJQcm9kLiBTZW5zaXRpdm9zIiwKICAiZGVzY3JpcHRpb24iOiAiQ29udHJvbCBkZSBwcm9kdWN0b3Mgc2Vuc2l0aXZvcyBkZSBHcnVwbyBSaWJhIFNtaXRoIiwKICAic3RhcnRfdXJsIjogIi4iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMxMTE4MjciLAogICJ0aGVtZV9jb2xvciI6ICIjMTEyYTQ5IiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiaWNvbi0xOTIucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogImljb24tNTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfQogIF0KfQ==">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
-  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
   <style>
     :root {
@@ -25,7 +16,6 @@
       --secondary-color: #374151;
       --bg-light: #f4f5f7;
       --accent-green: #0A7456;
-      --accent-blue: #3B82F6;
       --accent-red: #E34F4F;
       --highlight-yellow: #fff2b0;
       --highlight-green: #d4edda;
@@ -40,6 +30,7 @@
     }
     .container { max-width: 960px; margin: 0 auto; }
 
+    /* Splash */
     #splash {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: var(--primary-color); color: #fff;
@@ -70,10 +61,6 @@
     .action-btn:hover { background: var(--secondary-color); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     .action-btn.danger { background: var(--accent-red); }
     .action-btn.danger:hover { background: #dc2626; }
-    .action-btn.green { background: var(--accent-green); }
-    .action-btn.green:hover { background: #08664b; }
-    .action-btn.blue { background: var(--accent-blue); }
-    .action-btn.blue:hover { background: #2563eb; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
     .chip {
@@ -81,6 +68,7 @@
       background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
       transition: all 0.2s ease-in-out; font-size: 14px;
     }
+    .chip:hover { transform: translateY(-2px); box-shadow: 0 3px 6px rgba(0,0,0,0.15); }
     .chip.active { background: var(--primary-color); color: white; }
 
     .table-container { overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 8px; }
@@ -104,14 +92,8 @@
     .decreased { background-color: var(--highlight-red) !important; }
 
     .toast-container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex; 
-      flex-direction: column-reverse; 
-      gap: 10px; 
-      z-index: 1000;
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column-reverse; gap: 10px; z-index: 1000;
     }
     .toast {
       padding: 12px 20px; border-radius: 8px; color: white; font-weight: 600;
@@ -122,87 +104,14 @@
     .toast.warning { background-color: #ff9800; }
     .toast.error { background-color: var(--accent-red); }
     @keyframes slideIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
-    
-    /* Botón de instalación */
-    #installButton {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--accent-blue);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-      z-index: 1000;
-      display: none;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    /* Estilos para el PDF/Impresión */
-    @media print {
-      @page { margin: 10mm; }
-      body { padding: 0; font-family: 'Poppins', sans-serif; font-size: 12pt; }
-      .container, header, .controls, .chips, .actions { display: none; }
-      .printable-content { display: block !important; }
-      .page-break { page-break-before: always; }
-
-      .pdf-header { text-align: center; margin-bottom: 20px; }
-      .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
-      .pdf-header p { 
-        font-size: 16pt; 
-        font-weight: bold; 
-        margin-top: 5px; 
-        text-align: center; 
-      }
-
-      .pdf-section-title { text-align: center; font-size: 16pt; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
-
-      table { border-collapse: collapse; margin-top: 10px; font-size: 12pt; table-layout: fixed; margin-left: auto; margin-right: auto; width: 90%; }
-      th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-      th { background: #f0f0f0; font-weight: bold; }
-
-      .initial-highlight { background-color: #fff2b0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-      .pdf-footer {
-        position: fixed;
-        bottom: 20px;
-        width: 100%;
-        text-align: center;
-        font-size: 16pt; 
-        font-weight: bold; 
-        color: #666;
-      }
-      .page-break { page-break-before: always; }
-      .print-btn { display:none; }
-
-      /* Anchos de columna y alineación para el PDF */
-      table th:nth-child(1), table td:nth-child(1){ width: 10%; } /* PRECIO */
-      table th:nth-child(2), table td:nth-child(2){ width: 30%; text-align: center; } /* PRODUCTO SENSITIVO - CENTRADO */
-      table th:nth-child(3), table td:nth-child(3){ width: 15%; } /* 07:00 */
-      table th:nth-child(4), table td:nth-child(4){ width: 15%; } /* 12:00 */
-      table th:nth-child(5), table td:nth-child(5){ width: 15%; } /* 15:00 */
-      table th:nth-child(6), table td:nth-child(6){ width: 15%; } /* 22:00 */
-
-      .product-sensitive-header{
-        white-space: normal;
-        line-height: 1.2;
-      }
-    }
   </style>
 </head>
 <body>
   <div id="splash">
-    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI2MCIgY3k9IjYwIiByPSI1MCIgZmlsbD0iIzExMTgyNyIvPjx0ZXh0IHg9IjYwIiB5PSI2NSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE4IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UlM8L3RleHQ+PC9zdmc+" alt="Logo">
+    <img src="icon-192.png" alt="Logo">
     <h2>PRODUCTOS SENSITIVOS</h2>
     <p>Powered by Rafael Ramos</p>
-    <p>Versión 1.1</p>
+    <p>Versión 1.0</p>
   </div>
 
   <div class="container">
@@ -220,8 +129,7 @@
 
     <div class="actions">
       <button id="btnAdd" class="action-btn"><i class="fas fa-plus"></i> Agregar Fila</button>
-      <button id="btnSave" class="action-btn blue"><i class="fas fa-save"></i> Guardar</button>
-      <button id="btnExport" class="action-btn green"><i class="fas fa-file-pdf"></i> Generar PDF</button>
+      <button id="btnExport" class="action-btn"><i class="fas fa-file-pdf"></i> Generar PDF</button>
       <button id="btnClear" class="action-btn danger"><i class="fas fa-eraser"></i> Borrar Horarios</button>
       <button id="btnDeleteRow" class="action-btn danger"><i class="fas fa-trash-alt"></i> Eliminar Fila</button>
     </div>
@@ -245,71 +153,33 @@
     <div id="toast" class="toast-container"></div>
   </div>
 
-  <!-- Botón de instalación -->
-  <button id="installButton" title="Instalar aplicación">
-    <i class="fas fa-download"></i>
-  </button>
-
   <script>
     (function () {
-      const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASILLO 1'];
+      const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASTILLO 1'];
       const STORAGE_KEY = 'productos_sensitivos_por_seccion';
       let productos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       let seccionActiva = DEFAULT_SECCIONES[0];
       let insertIndex = null;
       let selectedRow = null;
-      let deferredPrompt;
 
       const tbody = document.getElementById('tbody');
       const chipsEl = document.getElementById('chips');
-      const btnSave = document.getElementById('btnSave');
       const btnExport = document.getElementById('btnExport');
       const btnClear = document.getElementById('btnClear');
       const btnAdd = document.getElementById('btnAdd');
       const btnDeleteRow = document.getElementById('btnDeleteRow');
-      const installButton = document.getElementById('installButton');
       const toastContainer = document.getElementById('toast');
 
+      // Ocultar splash
       window.addEventListener("load", () => {
         setTimeout(() => { document.getElementById("splash").style.opacity = "0"; }, 1500);
         setTimeout(() => { document.getElementById("splash").style.display = "none"; }, 2000);
-        
-        // Registrar service worker
-        if ('serviceWorker' in navigator) {
-          navigator.serviceWorker.register('data:application/javascript;base64,KGZ1bmN0aW9uKCkgewogICdzZXJ2aWNlV29ya2VyJyBpbiBuYXZpZ2F0b3IgJiYgbmF2aWdhdG9yLnNlcnZpY2VXb3JrZXIucmVnaXN0ZXIoJy8nLCB7IHNjb3BlOiAnLycgfSkKfSkoKTs=');
-        }
-      });
-
-      // Eventos para la instalación de PWA
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        installButton.style.display = 'flex';
-      });
-
-      installButton.addEventListener('click', async () => {
-        if (!deferredPrompt) return;
-        
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        
-        if (outcome === 'accepted') {
-          showToast('Aplicación instalada', 'success');
-          installButton.style.display = 'none';
-        }
-        
-        deferredPrompt = null;
-      });
-
-      window.addEventListener('appinstalled', () => {
-        installButton.style.display = 'none';
-        deferredPrompt = null;
       });
 
       function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(productos)); }
       function showToast(msg,type='success'){
         const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;toastContainer.appendChild(t);
-        setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(20px)';setTimeout(()=>t.remove(),500);},2000);
+        setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(20px)';setTimeout(()=>t.remove(),500);},2000); // ⏱️ ahora 2s
       }
 
       function renderChips(){
@@ -334,65 +204,28 @@
             <td><input type="number" data-field="t1500" value="${p.t1500||''}"></td>
             <td><input type="number" data-field="t2200" value="${p.t2200||''}"></td>
           `;
-          
-          tr.querySelectorAll('[contenteditable="true"]').forEach(td=>{
-            td.addEventListener('input',()=>{
-              const field=td.dataset.field;
-              const index=productos.indexOf(p);
-              productos[index][field]=td.innerText.trim();
-              save();
+          const inputs=tr.querySelectorAll('input[type="number"]');
+          inputs.forEach(inp=>{
+            inp.addEventListener('input',()=>{
+              const idx=productos.indexOf(p);productos[idx][inp.dataset.field]=inp.value.trim();save();applyColorLogic(inp);
             });
           });
-          
-          const applyColorAndAlertLogic = (targetInput) => {
-              const currentRowInputs = Array.from(targetInput.closest('tr').querySelectorAll('input[type="number"]'));
-              const currentIndex = currentRowInputs.indexOf(targetInput);
-              
-              const currentValue = parseFloat(targetInput.value);
-              const prevInput = currentRowInputs[currentIndex - 1];
-              const prevValue = prevInput ? parseFloat(prevInput.value) : NaN;
-
-              targetInput.classList.remove('initial-highlight', 'increased', 'decreased');
-
-              if (currentIndex > 0 && !isNaN(currentValue) && !isNaN(prevValue) && prevValue !== 0) {
-                  if (currentValue < prevValue) {
-                      targetInput.classList.add('decreased');
-                      showToast('¡Advertencia! Diferencia detectada.','warning');
-                  } else if (currentValue > prevValue) {
-                      targetInput.classList.add('increased');
-                  }
-              }
-          };
-
-          tr.querySelectorAll('input[type="number"]').forEach((inp, idx) => {
-            inp.addEventListener('input', () => {
-              const index = productos.indexOf(p);
-              const field = inp.dataset.field;
-              const newValue = inp.value.trim();
-
-              productos[index][field] = newValue;
-              save();
-
-              applyColorAndAlertLogic(inp);
-
-              const currentRowInputs = Array.from(inp.closest('tr').querySelectorAll('input[type="number"]'));
-              const currentIndex = currentRowInputs.indexOf(inp);
-              for (let j = currentIndex + 1; j < currentRowInputs.length; j++) {
-                  applyColorAndAlertLogic(currentRowInputs[j]);
-              }
-            });
-          });
-          
           tr.addEventListener('click',()=>{if(selectedRow)selectedRow.classList.remove('selected-row');selectedRow=tr;selectedRow.classList.add('selected-row');insertIndex=productos.indexOf(p);});
           tbody.appendChild(tr);
         });
       }
 
-      // Evento para el botón de guardar
-      btnSave.onclick = () => {
-        save();
-        showToast('Datos guardados correctamente.', 'success');
-      };
+      function applyColorLogic(inp){
+        const rowInputs=Array.from(inp.closest('tr').querySelectorAll('input'));
+        const idx=rowInputs.indexOf(inp);
+        const val=parseFloat(inp.value);const prevVal=idx>0?parseFloat(rowInputs[idx-1].value):NaN;
+        inp.classList.remove('initial-highlight','increased','decreased');
+        if(idx===0&&inp.value.trim()!==''){inp.classList.add('initial-highlight');}
+        else if(!isNaN(val)&&!isNaN(prevVal)&&prevVal!==0){
+          if(val<prevVal){inp.classList.add('decreased');showToast('¡Advertencia! Diferencia detectada.','warning');}
+          else if(val>prevVal){inp.classList.add('increased');}
+        }
+      }
 
       btnAdd.onclick=()=>{const f={seccion:seccionActiva,precio:'',nombre:'',t0700:'',t1200:'',t1500:'',t2200:''};
         if(insertIndex!==null){productos.splice(insertIndex+1,0,f);showToast('Fila agregada.','success');}
@@ -404,134 +237,8 @@
 
       btnClear.onclick=()=>{if(confirm('¿Borrar horarios de la sección?')){productos=productos.map(p=>p.seccion===seccionActiva?{...p,t0700:'',t1200:'',t1500:'',t2200:''}:p);save();render();showToast('Horarios borrados.','success');}};
 
-      btnExport.onclick = () => {
-        if (!productos.length) {
-          showToast('No hay productos para exportar.', 'warning');
-          return;
-        }
+      btnExport.onclick=()=>{if(!productos.length){showToast('No hay productos.','warning');return;}window.print();};
 
-        const getPdfCellClass = (currentValue, prevValue, isFirstColumn) => {
-          const numCurrent = parseFloat(currentValue);
-          const numPrev = parseFloat(prevValue);
-
-          if (isFirstColumn) {
-            return '';
-          } else if (!isNaN(numCurrent) && !isNaN(numPrev) && prevValue !== '') {
-            if (numCurrent < numPrev) {
-              return 'decreased';
-            } else if (currentValue > numPrev) {
-              return 'increased';
-            }
-          }
-          return '';
-        };
-
-        let html = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
-        <style>
-          body{font-family:'Poppins', sans-serif; margin:0; padding:0;}
-          
-          /* Estilos para el PDF/Impresión */
-          .printable-content { padding: 40px 30px; }
-          .pdf-header { text-align: center; margin-bottom: 20px; }
-          .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
-          .pdf-header p { 
-            font-size: 16pt; 
-            font-weight: bold; 
-            margin-top: 5px; 
-            text-align: center; 
-          }
-
-          .pdf-section-title { text-align: center; font-size: 16pt; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
-
-          table { border-collapse: collapse; margin-top: 10px; font-size: 12pt; table-layout: fixed; margin-left: auto; margin-right: auto; width: 90%; }
-          th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-          th { background: #f0f0f0; font-weight: bold; }
-
-          .initial-highlight { background-color: #fff2b0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-          .pdf-footer {
-            position: fixed;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-            font-size: 16pt; 
-            font-weight: bold; 
-            color: #666;
-          }
-          .page-break { page-break-before: always; }
-          .print-btn { display:none; }
-
-          /* Anchos de columna y alineación para el PDF */
-          table th:nth-child(1), table td:nth-child(1){ width: 10%; } /* PRECIO */
-          table th:nth-child(2), table td:nth-child(2){ width: 30%; text-align: center; } /* PRODUCTO SENSITIVO - CENTRADO */
-          table th:nth-child(3), table td:nth-child(3){ width: 15%; } /* 07:00 */
-          table th:nth-child(4), table td:nth-child(4){ width: 15%; } /* 12:00 */
-          table th:nth-child(5), table td:nth-child(5){ width: 15%; } /* 15:00 */
-          table th:nth-child(6), table td:nth-child(6){ width: 15%; } /* 22:00 */
-
-          .product-sensitive-header{
-            white-space: normal;
-            line-height: 1.2;
-          }
-        </style></head><body>`;
-        
-        html += `<div class="printable-content">`;
-        html += `<div class="pdf-header">`;
-        html += `<h1>GRUPO RIBA SMITH</h1>`;
-        html += `<h1>R/S CHITRÉ SELECTO</h1>`;
-        html += `<h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>`;
-        html += `<p>Fecha de exportación: ${new Date().toLocaleDateString('es-ES')}</p>`;
-        html += `</div>`;
-
-        const secciones = ['PASILLO 6', 'MEDICAMENTOS', 'CAVA', 'PASTILLAS CANINAS', 'PASILLO 1'];
-
-        secciones.forEach((sec, index) => {
-            const rows = productos.filter(p => p.seccion === sec);
-            if (rows.length) {
-                if (index > 0) {
-                    html += `<div class="page-break"></div>`;
-                }
-                html += `<div class="pdf-section-title">${sec}</div>`;
-                html += `<table><thead><tr><th>PRECIO</th><th class="product-sensitive-header">PRODUCTO<br>SENSITIVO</th><th>07:00</th><th>12:00</th><th>15:00</th><th>22:00</th></tr></thead><tbody>`;
-                rows.forEach(r => {
-                    let t0700_val = r.t0700 || '';
-                    let t1200_val = r.t1200 || '';
-                    let t1500_val = r.t1500 || '';
-                    let t2200_val = r.t2200 || '';
-
-                    // Recalcular las clases de color para el PDF basándose en los valores
-                    let class0700 = getPdfCellClass(t0700_val, '', true); 
-                    let class1200 = getPdfCellClass(t1200_val, t0700_val, false);
-                    let class1500 = getPdfCellClass(t1500_val, t1200_val, false);
-                    let class2200 = getPdfCellClass(t2200_val, t1500_val, false);
-                    
-                    html += `<tr>
-                        <td>${r.precio||''}</td>
-                        <td class="product-sensitive-header" style="text-align: center;">${r.nombre||''}</td>
-                        <td class="${class0700}">${t0700_val}</td>
-                        <td class="${class1200}">${t1200_val}</td>
-                        <td class="${class1500}">${t1500_val}</td>
-                        <td class="${class2200}">${t2200_val}</td>
-                    </tr>`;
-                });
-                html += `</tbody></table>`;
-            }
-        });
-        
-        html += `<div class="pdf-footer">Powered by Rafael Ramos</div>`;
-        html += `<button class='print-btn' onclick='window.print()'>Guardar como PDF</button>`;
-        html += `</div>`;
-        html += `</body></html>`;
-
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(html);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => printWindow.print(), 1000);
-      };
-      
       render();
     })();
   </script>

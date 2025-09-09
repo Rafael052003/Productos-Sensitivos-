@@ -95,8 +95,14 @@
     .decreased { background-color: var(--highlight-red) !important; }
 
     .toast-container {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column-reverse; gap: 10px; z-index: 1000;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex; 
+      flex-direction: column-reverse; 
+      gap: 10px; 
+      z-index: 1000;
     }
     .toast {
       padding: 12px 20px; border-radius: 8px; color: white; font-weight: 600;
@@ -292,9 +298,6 @@
           };
 
           tr.querySelectorAll('input[type="number"]').forEach((inp) => {
-            // Eliminar la llamada a applyColorAndAlertLogic al renderizar para evitar la notificación
-            // applyColorAndAlertLogic(inp);
-
             inp.addEventListener('input', () => {
               const index = productos.indexOf(p);
               const field = inp.dataset.field;
@@ -303,7 +306,6 @@
               productos[index][field] = newValue;
               save();
 
-              // Aplicar la lógica de color y alerta solo al cambiar valores manualmente
               applyColorAndAlertLogic(inp);
 
               const currentRowInputs = Array.from(inp.closest('tr').querySelectorAll('input[type="number"]'));

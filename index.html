@@ -119,8 +119,8 @@
       .pdf-header { text-align: center; margin-bottom: 20px; }
       .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
       .pdf-header p { 
-        font-size: 16pt; /* Más grande */
-        font-weight: bold; /* Negrita */
+        font-size: 16pt; 
+        font-weight: bold; 
         margin-top: 5px; 
         text-align: center; 
       }
@@ -140,8 +140,8 @@
         bottom: 20px;
         width: 100%;
         text-align: center;
-        font-size: 16pt; /* Más grande */
-        font-weight: bold; /* Negrita */
+        font-size: 16pt; 
+        font-weight: bold; 
         color: #666;
       }
       .page-break { page-break-before: always; }
@@ -291,8 +291,9 @@
               }
           };
 
-          tr.querySelectorAll('input[type="number"]').forEach((inp, idx) => {
-            applyColorAndAlertLogic(inp);
+          tr.querySelectorAll('input[type="number"]').forEach((inp) => {
+            // Eliminar la llamada a applyColorAndAlertLogic al renderizar para evitar la notificación
+            // applyColorAndAlertLogic(inp);
 
             inp.addEventListener('input', () => {
               const index = productos.indexOf(p);
@@ -302,6 +303,7 @@
               productos[index][field] = newValue;
               save();
 
+              // Aplicar la lógica de color y alerta solo al cambiar valores manualmente
               applyColorAndAlertLogic(inp);
 
               const currentRowInputs = Array.from(inp.closest('tr').querySelectorAll('input[type="number"]'));

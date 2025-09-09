@@ -336,8 +336,15 @@
             }
         });
 
-        // La modificación es aquí
-        doc.save('Listado_Productos_Sensitivos.pdf');
+        const blob = doc.output('blob');
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Listado_Productos_Sensitivos.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
       };
 
       render();

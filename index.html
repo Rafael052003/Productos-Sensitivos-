@@ -111,13 +111,31 @@
 
     /* Estilos para el PDF/Impresión */
     @media print {
-      body { padding: 0; }
+      @page { margin: 10mm; }
+      body { padding: 0; font-family: 'Poppins', sans-serif; }
       .container, header, .controls, .chips { display: none; }
-      table { border-spacing: 0; margin-top: 0; border-radius: 0; box-shadow: none; }
+      .printable-content { display: block !important; }
+      .page-break { page-break-before: always; }
+
+      .pdf-header { text-align: center; margin-bottom: 20px; }
+      .pdf-header h1 { font-size: 16px; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
+      .pdf-header p { font-size: 10px; margin-top: 5px; text-align: right; margin-right: 15px; }
+
+      .pdf-section-title { text-align: center; font-size: 12px; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
+
+      table { border-collapse: collapse; margin-top: 10px; font-size: 9px; }
       th, td { border: 1px solid #333; padding: 6px; }
-      th { background: #f0f0f0; }
+      th { background: #f0f0f0; font-weight: bold; }
+
       .initial-highlight, .increased, .decreased { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .print-btn { display: none; }
+
+      .pdf-footer {
+        position: fixed;
+        bottom: 0;
+        right: 15px;
+        font-size: 8px;
+        color: #666;
+      }
     }
   </style>
 </head>
@@ -251,7 +269,6 @@
           };
 
           tr.querySelectorAll('input[type="number"]').forEach((inp, idx) => {
-            // Aplicar el color inicial al renderizar
             applyColorAndAlertLogic(inp);
 
             inp.addEventListener('input', () => {
@@ -262,10 +279,8 @@
               productos[index][field] = newValue;
               save();
 
-              // Aplicar la lógica de colores y alertas al input que se acaba de editar
               applyColorAndAlertLogic(inp);
 
-              // Luego, re-evaluar y actualizar los colores para todos los inputs siguientes
               const currentRowInputs = Array.from(inp.closest('tr').querySelectorAll('input[type="number"]'));
               const currentIndex = currentRowInputs.indexOf(inp);
               for (let j = currentIndex + 1; j < currentRowInputs.length; j++) {
@@ -292,7 +307,6 @@
       btnExport.onclick=()=>{
         if(!productos.length){showToast('No hay productos para exportar.', 'warning');return;}
 
-        // Función auxiliar para determinar la clase de color para el PDF
         const getPdfCellClass = (currentValue, prevValue, isFirstColumn) => {
             const numCurrent = parseFloat(currentValue);
             const numPrev = parseFloat(prevValue);
@@ -311,81 +325,86 @@
 
         let html = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
         <style>
-          body{font-family:'Poppins', sans-serif; padding:40px; text-align:center;}
-          h1{margin:2px 0; font-size:16px;} p{margin-top:4px; font-size:12px;} h2{margin-top:20px; font-size:14px; text-transform: uppercase;}
-          table{width:100%;border-collapse:collapse;margin-top:12px; font-size:10px; table-layout: fixed; }
-          th,td{border:1px solid #333;padding:6px;text-align:center;}th{background:#f0f0f0;}
-          .print-btn{margin-top:20px;padding:10px 16px;font-size:16px;background:#111827;color:#fff;border:none;border-radius:8px;cursor:pointer;}
-          @media print{.print-btn{display:none;}}
-
-          /* Anchos de columna y alineación para el PDF */
-          table th:nth-child(1), table td:nth-child(1){ width:10%; }
-          table th:nth-child(2), table td:nth-child(2){ width:30%; text-align: left;}
-          table th:nth-child(3), table td:nth-child(3){ width:15%; }
-          table th:nth-child(4), table td:nth-child(4){ width:15%; }
-          table th:nth-child(5), table td:nth-child(5){ width:15%; }
-          table th:nth-child(6), table td:nth-child(6){ width:15%; }
+          body{font-family:'Poppins', sans-serif; margin:0; padding:0;}
           
-          /* Estilos de color para el PDF */
-          .initial-highlight{ 
-            background-color:#fff2b0 !important; 
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
+          /* Estilos para el PDF/Impresión */
+          .printable-content { padding: 40px 30px; }
+          .pdf-header { text-align: center; margin-bottom: 20px; }
+          .pdf-header h1 { font-size: 16px; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
+          .pdf-header p { font-size: 10px; margin-top: 5px; text-align: right; margin-right: 15px; }
+
+          .pdf-section-title { text-align: center; font-size: 12px; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
+
+          table { width:100%; border-collapse:collapse; margin-top:10px; font-size:9px; table-layout: fixed; }
+          th, td { border:1px solid #333; padding:6px; text-align:center; }
+          th { background:#f0f0f0; font-weight: bold; }
+
+          .initial-highlight, .increased, .decreased { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+          .pdf-footer {
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            font-size: 8px;
+            color: #666;
+            width: auto;
           }
-          .increased{ 
-            background-color:#d4edda !important; 
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          .decreased{ 
-            background-color:#f8d7da !important; 
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-          }
-          /* Estilo para la cabecera dividida en el PDF */
-          .product-sensitive-header{
-              white-space: normal;
-              line-height: 1.2;
-          }
+          .page-break { page-break-before: always; }
+          .print-btn { display:none; }
         </style></head><body>`;
+        
+        html += `<div class="printable-content">`;
+        html += `<div class="pdf-header">`;
+        html += `<h1>GRUPO RIBA SMITH</h1>`;
+        html += `<h1>R/S CHITRÉ SELECTO</h1>`;
+        html += `<h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>`;
+        html += `<p>Fecha de exportación: ${new Date().toLocaleDateString('es-ES')}</p>`;
+        html += `</div>`;
 
-        const fecha=new Date().toLocaleDateString('es-ES',{year:'numeric',month:'2-digit',day:'2-digit'});
-        html += `<h1>GRUPO RIBA SMITH</h1><h1>R/S CHITRÉ SELECTO</h1><h1>LISTADO DE PRODUCTOS SENSITIVOS</h1><p>Fecha de exportación: ${fecha}</p>`;
-        const secciones=[...new Set(productos.map(p=>p.seccion))];
+        const secciones = ['PASILLO 6', 'MEDICAMENTOS', 'CAVA', 'PASTILLAS CANINAS', 'PASTILLO 1'];
 
-        secciones.forEach(sec=>{
-          const rows=productos.filter(p=>p.seccion===sec);
-          if(rows.length){
-            html += `<h2>${sec}</h2><table><thead><tr><th>PRECIO</th><th class="left product-sensitive-header">PRODUCTO<br>SENSITIVO</th><th>07:00</th><th>12:00</th><th>15:00</th><th>22:00</th></tr></thead><tbody>`;
-            rows.forEach(r=>{
-              let t0700_val = r.t0700 || '';
-              let t1200_val = r.t1200 || '';
-              let t1500_val = r.t1500 || '';
-              let t2200_val = r.t2200 || '';
+        secciones.forEach((sec, index) => {
+            const rows = productos.filter(p => p.seccion === sec);
+            if (rows.length) {
+                if (index > 0) {
+                    html += `<div class="page-break"></div>`;
+                }
+                html += `<div class="pdf-section-title">${sec}</div>`;
+                html += `<table><thead><tr><th>PRECIO</th><th style="text-align:left;">PRODUCTO<br>SENSITIVO</th><th>07:00</th><th>12:00</th><th>15:00</th><th>22:00</th></tr></thead><tbody>`;
+                rows.forEach(r => {
+                    let t0700_val = r.t0700 || '';
+                    let t1200_val = r.t1200 || '';
+                    let t1500_val = r.t1500 || '';
+                    let t2200_val = r.t2200 || '';
 
-              let class0700 = getPdfCellClass(t0700_val, '', true); 
-              let class1200 = getPdfCellClass(t1200_val, t0700_val, false);
-              let class1500 = getPdfCellClass(t1500_val, t1200_val, false);
-              let class2200 = getPdfCellClass(t2200_val, t1500_val, false);
-              
-              html += `<tr>
-                <td>${r.precio||''}</td>
-                <td style="text-align: left;">${r.nombre||''}</td>
-                <td class="${class0700}">${t0700_val}</td>
-                <td class="${class1200}">${t1200_val}</td>
-                <td class="${class1500}">${t1500_val}</td>
-                <td class="${class2200}">${t2200_val}</td>
-              </tr>`;
-            });
-            html += `</tbody></table>`;
-          }
+                    let class0700 = getPdfCellClass(t0700_val, '', true); 
+                    let class1200 = getPdfCellClass(t1200_val, t0700_val, false);
+                    let class1500 = getPdfCellClass(t1500_val, t1200_val, false);
+                    let class2200 = getPdfCellClass(t2200_val, t1500_val, false);
+                    
+                    html += `<tr>
+                        <td>${r.precio||''}</td>
+                        <td style="text-align: left;">${r.nombre||''}</td>
+                        <td class="${class0700}">${t0700_val}</td>
+                        <td class="${class1200}">${t1200_val}</td>
+                        <td class="${class1500}">${t1500_val}</td>
+                        <td class="${class2200}">${t2200_val}</td>
+                    </tr>`;
+                });
+                html += `</tbody></table>`;
+            }
         });
+        
+        html += `<div class="pdf-footer">Powered by Rafael Ramos</div>`;
         html += `<button class='print-btn' onclick='window.print()'>Guardar como PDF</button>`;
+        html += `</div>`;
         html += `</body></html>`;
+
         const printWindow = window.open('', '_blank');
         printWindow.document.write(html);
         printWindow.document.close();
         printWindow.focus();
+        setTimeout(() => printWindow.print(), 1000);
       };
       
       render();

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Productos Sensitivos</title>
+  <title>Grupo Riba Smith — R/S Chitré Selecto — Productos Sensitivos</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1f2937">
@@ -17,7 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
   <style>
-    /* Estilos del Código 3 para una mejor apariencia y funcionalidad */
     :root {
       --primary-color: #111827;
       --secondary-color: #374151;
@@ -33,8 +32,9 @@
       font-family: 'Poppins', sans-serif;
       background: var(--bg-light);
       color: var(--primary-color);
-      padding: 20px;
+      padding: 0;
     }
+    .main-content { padding: 20px; }
     .container { max-width: 960px; margin: 0 auto; }
 
     #splash {
@@ -47,8 +47,21 @@
     #splash h2 { font-weight: bold; font-size: 24px; margin-bottom: 10px; }
     #splash p { margin-top: 5px; font-size: 14px; opacity: 0.9; }
 
-    header { text-align: center; margin-bottom: 24px; }
-    .title-group { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
+    header { 
+      text-align: center; 
+      margin-bottom: 24px; 
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding-left: 60px;
+      padding-right: 20px;
+    }
+    .title-group { 
+      flex-grow: 1;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+    }
     .title-group h1 {
       font-size: 24px; font-weight: 700; margin: 2px 0;
       color: var(--primary-color); text-transform: uppercase;
@@ -69,6 +82,8 @@
     .action-btn.danger:hover { background: #dc2626; }
     .action-btn.green { background: var(--accent-green); }
     .action-btn.green:hover { background: #08664b; }
+    .action-btn.blue { background: #3b82f6; }
+    .action-btn.blue:hover { background: #2563eb; }
 
     .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
     .chip {
@@ -142,7 +157,6 @@
       th { background: #f0f0f0; font-weight: bold; }
 
       /* Control de color para impresión */
-      /* IMPORTANTE: -webkit-print-color-adjust: exact; print-color-adjust: exact; es crucial para que los colores se impriman */
       .initial-highlight { background-color: transparent !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } /* 07:00 sin color */
       .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -172,6 +186,58 @@
         line-height: 1.2;
       }
     }
+
+    /* Estilos del nuevo submenú */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      left: -300px; /* Oculto fuera de la pantalla */
+      width: 280px;
+      height: 100%;
+      background: var(--primary-color);
+      color: white;
+      padding: 20px;
+      z-index: 1001;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+      transition: left 0.3s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .side-menu.open {
+      left: 0; /* Visible */
+    }
+    
+    .side-menu .action-btn {
+      width: 100%;
+      justify-content: flex-start;
+      margin: 0;
+    }
+
+    .hamburger-btn {
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--primary-color);
+      padding: 10px;
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: none;
+    }
+    .overlay.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -182,44 +248,57 @@
     <p>Versión 1.0</p>
   </div>
 
-  <div class="container">
-    <header>
-      <div class="title-group">
-        <h1>GRUPO RIBA SMITH</h1>
-        <h1>R/S CHITRÉ SELECTO</h1>
-        <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
-      </div>
-    </header>
+  <div class="overlay" id="overlay"></div>
 
-    <div class="controls-container">
-      <div class="chips" id="chips"></div>
-    </div>
-
-    <div class="actions">
-      <button id="btnAdd" class="action-btn"><i class="fas fa-plus"></i> Agregar Fila</button>
-      <button id="btnExport" class="action-btn green"><i class="fas fa-file-pdf"></i> Generar PDF</button>
-      <button id="btnClear" class="action-btn danger"><i class="fas fa-eraser"></i> Borrar Horarios</button>
-      <button id="btnDeleteRow" class="action-btn danger"><i class="fas fa-trash-alt"></i> Eliminar Fila</button>
-    </div>
-
-    <div class="table-container">
-      <table id="tabla">
-        <thead>
-          <tr>
-            <th>PRECIO</th>
-            <th class="left product-sensitive">PRODUCTO<br>SENSITIVO</th>
-            <th>07:00</th>
-            <th>12:00</th>
-            <th>15:00</th>
-            <th>22:00</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-
-    <div id="toast" class="toast-container"></div>
+  <div class="side-menu" id="sideMenu">
+      <button id="btnExportJson_menu" class="action-btn blue"><i class="fas fa-download"></i> Exportar Datos</button>
+      <button id="btnImportJson_menu" class="action-btn blue"><i class="fas fa-upload"></i> Importar Datos</button>
   </div>
+
+  <div class="main-content">
+    <div class="container">
+      <header>
+        <i class="fas fa-bars hamburger-btn" id="hamburgerBtn"></i>
+
+        <div class="title-group">
+          <h1>GRUPO RIBA SMITH</h1>
+          <h1>R/S CHITRÉ SELECTO</h1>
+          <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
+        </div>
+      </header>
+
+      <div class="controls-container">
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <div class="actions">
+        <button id="btnAdd" class="action-btn"><i class="fas fa-plus"></i> Agregar Fila</button>
+        <button id="btnExport" class="action-btn green"><i class="fas fa-file-pdf"></i> Generar PDF</button>
+        <button id="btnClear" class="action-btn danger"><i class="fas fa-eraser"></i> Borrar Horarios</button>
+        <button id="btnDeleteRow" class="action-btn danger"><i class="fas fa-trash-alt"></i> Eliminar Fila</button>
+      </div>
+
+      <div class="table-container">
+        <table id="tabla">
+          <thead>
+            <tr>
+              <th>PRECIO</th>
+              <th class="left product-sensitive">PRODUCTO<br>SENSITIVO</th>
+              <th>07:00</th>
+              <th>12:00</th>
+              <th>15:00</th>
+              <th>22:00</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+
+      <div id="toast" class="toast-container"></div>
+    </div>
+  </div>
+  
+  <input type="file" id="fileInput" accept=".json" style="display: none;">
 
   <script>
     (function () {
@@ -237,6 +316,17 @@
       const btnAdd = document.getElementById('btnAdd');
       const btnDeleteRow = document.getElementById('btnDeleteRow');
       const toastContainer = document.getElementById('toast');
+      
+      const fileInput = document.getElementById('fileInput');
+
+      // Referencias para los botones en el menú lateral
+      const btnExportJson_menu = document.getElementById('btnExportJson_menu');
+      const btnImportJson_menu = document.getElementById('btnImportJson_menu');
+
+      // Referencias del menú lateral
+      const sideMenu = document.getElementById('sideMenu');
+      const hamburgerBtn = document.getElementById('hamburgerBtn');
+      const overlay = document.getElementById('overlay');
 
       window.addEventListener("load", () => {
         setTimeout(() => { document.getElementById("splash").style.opacity = "0"; }, 1500);
@@ -461,6 +551,67 @@
         setTimeout(() => printWindow.print(), 1000);
       };
       
+      const handleExportJson = () => {
+          if (!productos.length) {
+              showToast('No hay datos para exportar.', 'warning');
+              return;
+          }
+          const dataStr = JSON.stringify(productos, null, 2);
+          const blob = new Blob([dataStr], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `backup_productos_sensitivos_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.json`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          showToast('Datos exportados.', 'success');
+      };
+      
+      const handleImportJson = () => {
+          fileInput.click();
+      };
+      
+      btnExportJson_menu.onclick = handleExportJson;
+      btnImportJson_menu.onclick = handleImportJson;
+
+      fileInput.onchange = (event) => {
+          const file = event.target.files[0];
+          if (!file) {
+              return;
+          }
+          const reader = new FileReader();
+          reader.onload = (e) => {
+              try {
+                  const importedData = JSON.parse(e.target.result);
+                  if (Array.isArray(importedData) && importedData.every(item => 'seccion' in item && 'nombre' in item)) {
+                      productos = importedData;
+                      save();
+                      render();
+                      showToast('Datos importados con éxito.', 'success');
+                  } else {
+                      showToast('Archivo JSON no válido.', 'error');
+                  }
+              } catch (error) {
+                  showToast('Error al procesar el archivo.', 'error');
+              } finally {
+                  event.target.value = ''; 
+              }
+          };
+          reader.readAsText(file);
+      };
+
+      hamburgerBtn.addEventListener('click', () => {
+        sideMenu.classList.toggle('open');
+        overlay.classList.toggle('active');
+      });
+
+      overlay.addEventListener('click', () => {
+        sideMenu.classList.remove('open');
+        overlay.classList.remove('active');
+      });
+
       render();
     })();
   </script>

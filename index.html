@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Grupo Riba Smith — R/S Chitré Selecto — Productos Sensitivos</title>
+  <title>Productos Sensitivos</title>
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1f2937">
@@ -302,7 +302,7 @@
 
   <script>
     (function () {
-      const DEFAULT_SECCIONES = ['PASILLO 6','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','PASILLO 1']; 
+      const DEFAULT_SECCIONES = ['FORMULAS','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','LICORES']; 
       const STORAGE_KEY = 'productos_sensitivos_por_seccion';
       let productos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
       let seccionActiva = DEFAULT_SECCIONES[0];
@@ -505,7 +505,7 @@
         html += `<p>Fecha de exportación: ${new Date().toLocaleDateString('es-ES')}</p>`;
         html += `</div>`;
 
-        const secciones = ['PASILLO 6', 'MEDICAMENTOS', 'CAVA', 'PASTILLAS CANINAS', 'PASILLO 1']; 
+        const secciones = ['FORMULAS', 'MEDICAMENTOS', 'CAVA', 'PASTILLAS CANINAS', 'LICORES']; 
 
         secciones.forEach((sec, index) => {
             const rows = productos.filter(p => p.seccion === sec);

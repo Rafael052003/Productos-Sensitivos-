@@ -1,619 +1,586 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Productos Sensitivos</title>
-  
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#1f2937">
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRODUCTOS SENSITIVOS</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        :root { --primary-color: #111827; --secondary-color: #374151; --bg-light: #f4f5f7; --accent-green: #0A7456; --accent-red: #E34F4F; --highlight-yellow: #fff2b0; --highlight-green: #d4edda; --highlight-red: #f8d7da; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg-light); color: var(--primary-color); padding: 0; }
+        .main-content { padding: 20px; }
+        .container { max-width: 960px; margin: 0 auto; }
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-color); color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-out; }
+        #splash img { width: 120px; margin-bottom: 20px; }
+        #splash h2 { font-weight: bold; font-size: 24px; margin-bottom: 10px; }
+        #splash p { margin-top: 5px; font-size: 14px; opacity: 0.9; }
+        header { text-align: center; margin-bottom: 24px; display: flex; align-items: center; position: relative; padding-left: 60px; padding-right: 20px; }
+        .title-group { flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
+        .title-group h1 { font-size: 24px; font-weight: 700; margin: 2px 0; color: var(--primary-color); text-transform: uppercase; }
+        @media (max-width: 600px) { .title-group h1 { font-size: 18px; } }
+        .controls-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+        .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 20px; }
+        .action-btn { background: var(--primary-color); color: white; border: 0; padding: 12px 24px; border-radius: 999px; cursor: pointer; font-weight: 600; transition: all 0.2s ease-in-out; display: flex; align-items: center; gap: 8px; }
+        .action-btn:hover { background: var(--secondary-color); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .action-btn.danger { background: var(--accent-red); }
+        .action-btn.danger:hover { background: #dc2626; }
+        .action-btn.green { background: var(--accent-green); }
+        .action-btn.green:hover { background: #08664b; }
+        .action-btn.blue { background: #3b82f6; }
+        .action-btn.blue:hover { background: #2563eb; }
+        .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+        .chip { padding: 8px 16px; border-radius: 999px; cursor: pointer; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.2s ease-in-out; font-size: 14px; }
+        .chip.active { background: var(--primary-color); color: white; }
+        .table-container { overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 8px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { border: 1px solid #e5e7eb; padding: 12px; text-align: center; }
+        th { background: #f3f4f6; font-weight: 600; white-space: nowrap; }
+        td.left { text-align: left; }
+        th.product-sensitive { white-space: normal; line-height: 1.2; }
+        input[type="number"] { width: 100%; border: 0; text-align: center; background: transparent; font-size: 14px; padding: 2px; outline: none; transition: background-color 0.3s; }
+        td[contenteditable="true"] { background: #fefce8; }
+        .selected-row { background-color: #e0f7fa !important; }
+        .initial-highlight { background-color: var(--highlight-yellow) !important; }
+        .increased { background-color: var(--highlight-green) !important; }
+        .decreased { background-color: var(--highlight-red) !important; }
+        .toast-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column-reverse; gap: 10px; z-index: 1000; }
+        .toast { padding: 12px 20px; border-radius: 8px; color: white; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px); animation: slideIn 0.5s forwards; }
+        .toast.success { background-color: var(--accent-green); }
+        .toast.warning { background-color: #ff9800; }
+        .toast.error { background-color: var(--accent-red); }
+        @keyframes slideIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+        /* Estilos para el PDF/Impresión */
+        @media print {
+            body { padding: 0; font-family: 'Poppins', sans-serif; font-size: 12pt; }
+            .container, header, .controls, .chips, .actions { display: none; }
+            .printable-content { display: block !important; padding: 0; }
+            .pdf-header { text-align: center; margin-bottom: 20px; }
+            .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
+            .pdf-header p { font-size: 16pt; font-weight: bold; margin-top: 5px; text-align: center; }
+            .pdf-section-title { text-align: center; font-size: 16pt; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
+            table { border-collapse: collapse; margin-top: 10px; font-size: 12pt; table-layout: fixed; margin-left: auto; margin-right: auto; width: 90%; margin-bottom: 50px; }
+            table:last-of-type { margin-bottom: 20px; }
+            th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+            th { background: #f0f0f0; font-weight: bold; }
+            .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .pdf-footer { text-align: center; font-size: 16pt; font-weight: bold; color: #666; margin-top: 20px; position: relative; }
+            .pdf-section-container { page-break-after: always; }
+            .pdf-section-container:last-of-type { page-break-after: avoid; }
+            .print-btn { display:none; }
+            table th:nth-child(1), table td:nth-child(1){ width: 10%; }
+            table th:nth-child(2), table td:nth-child(2){ width: 30%; text-align: center; }
+            table th:nth-child(3), table td:nth-child(3){ width: 15%; }
+            table th:nth-child(4), table td:nth-child(4){ width: 15%; }
+            table th:nth-child(5), table td:nth-child(5){ width: 15%; }
+            table th:nth-child(6), table td:nth-child(6){ width: 15%; }
+            .product-sensitive-header{ white-space: normal; line-height: 1.2; }
+        }
+        /* Estilos del nuevo submenú */
+        .side-menu { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: var(--primary-color); color: white; padding: 20px; z-index: 1001; box-shadow: 2px 0 5px rgba(0,0,0,0.5); transition: left 0.3s ease-in-out; display: flex; flex-direction: column; gap: 10px; }
+        .side-menu.open { left: 0; }
+        .side-menu .action-btn { width: 100%; justify-content: flex-start; margin: 0; }
+        .hamburger-btn { font-size: 24px; cursor: pointer; color: var(--primary-color); padding: 10px; position: absolute; left: 0; top: 50%; transform: translateY(-50%); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; }
+        .overlay.active { display: block; }
 
-  <style>
-    :root {
-      --primary-color: #111827;
-      --secondary-color: #374151;
-      --bg-light: #f4f5f7;
-      --accent-green: #0A7456;
-      --accent-red: #E34F4F;
-      --highlight-yellow: #fff2b0;
-      --highlight-green: #d4edda;
-      --highlight-red: #f8d7da;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg-light);
-      color: var(--primary-color);
-      padding: 0;
-    }
-    .main-content { padding: 20px; }
-    .container { max-width: 960px; margin: 0 auto; }
-
-    #splash {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: var(--primary-color); color: #fff;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      z-index: 9999; transition: opacity 0.5s ease-out;
-    }
-    #splash img { width: 120px; margin-bottom: 20px; }
-    #splash h2 { font-weight: bold; font-size: 24px; margin-bottom: 10px; }
-    #splash p { margin-top: 5px; font-size: 14px; opacity: 0.9; }
-
-    header { 
-      text-align: center; 
-      margin-bottom: 24px; 
-      display: flex;
-      align-items: center;
-      position: relative;
-      padding-left: 60px;
-      padding-right: 20px;
-    }
-    .title-group { 
-      flex-grow: 1;
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-    }
-    .title-group h1 {
-      font-size: 24px; font-weight: 700; margin: 2px 0;
-      color: var(--primary-color); text-transform: uppercase;
-    }
-    @media (max-width: 600px) { .title-group h1 { font-size: 18px; } }
-
-    .controls-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-    .actions {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 20px;
-    }
-    .action-btn {
-      background: var(--primary-color); color: white; border: 0;
-      padding: 12px 24px; border-radius: 999px; cursor: pointer; font-weight: 600;
-      transition: all 0.2s ease-in-out; display: flex; align-items: center; gap: 8px;
-    }
-    .action-btn:hover { background: var(--secondary-color); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .action-btn.danger { background: var(--accent-red); }
-    .action-btn.danger:hover { background: #dc2626; }
-    .action-btn.green { background: var(--accent-green); }
-    .action-btn.green:hover { background: #08664b; }
-    .action-btn.blue { background: #3b82f6; }
-    .action-btn.blue:hover { background: #2563eb; }
-
-    .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-    .chip {
-      padding: 8px 16px; border-radius: 999px; cursor: pointer;
-      background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      transition: all 0.2s ease-in-out; font-size: 14px;
-    }
-    .chip.active { background: var(--primary-color); color: white; }
-
-    .table-container { overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 8px; }
-    table {
-      width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px;
-      background: white; border-radius: 8px; overflow: hidden;
-    }
-    th, td { border: 1px solid #e5e7eb; padding: 12px; text-align: center; }
-    th { background: #f3f4f6; font-weight: 600; white-space: nowrap; }
-    td.left { text-align: left; }
-    th.product-sensitive { white-space: normal; line-height: 1.2; }
-    input[type="number"] {
-      width: 100%; border: 0; text-align: center; background: transparent;
-      font-size: 14px; padding: 2px; outline: none; transition: background-color 0.3s;
-    }
-    td[contenteditable="true"] { background: #fefce8; }
-
-    .selected-row { background-color: #e0f7fa !important; }
-    .initial-highlight { background-color: var(--highlight-yellow) !important; } 
-    .increased { background-color: var(--highlight-green) !important; }
-    .decreased { background-color: var(--highlight-red) !important; }
-
-    .toast-container {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: flex; 
-      flex-direction: column-reverse; 
-      gap: 10px; 
-      z-index: 1000;
-    }
-    .toast {
-      padding: 12px 20px; border-radius: 8px; color: white; font-weight: 600;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px);
-      animation: slideIn 0.5s forwards;
-    }
-    .toast.success { background-color: var(--accent-green); }
-    .toast.warning { background-color: #ff9800; }
-    .toast.error { background-color: var(--accent-red); }
-    @keyframes slideIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
-    
-    /* Estilos para el PDF/Impresión, adaptados del Código 3 */
-    @media print {
-      @page { margin: 10mm; }
-      body { padding: 0; font-family: 'Poppins', sans-serif; font-size: 12pt; }
-      .container, header, .controls, .chips, .actions { display: none; }
-      .printable-content { display: block !important; }
-      .page-break { page-break-before: always; }
-
-      .pdf-header { text-align: center; margin-bottom: 20px; }
-      .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
-      .pdf-header p { 
-        font-size: 16pt; 
-        font-weight: bold; 
-        margin-top: 5px; 
-        text-align: center; 
-      }
-
-      .pdf-section-title { text-align: center; font-size: 16pt; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
-
-      table { border-collapse: collapse; margin-top: 10px; font-size: 12pt; table-layout: fixed; margin-left: auto; margin-right: auto; width: 90%; }
-      th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-      th { background: #f0f0f0; font-weight: bold; }
-
-      /* Control de color para impresión */
-      .initial-highlight { background-color: transparent !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; } /* 07:00 sin color */
-      .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-      .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-      .pdf-footer {
-        position: fixed;
-        bottom: 20px;
-        width: 100%;
-        text-align: center;
-        font-size: 16pt; 
-        font-weight: bold; 
-        color: #666;
-      }
-      .page-break { page-break-before: always; }
-      .print-btn { display:none; }
-
-      /* Anchos de columna y alineación para el PDF */
-      table th:nth-child(1), table td:nth-child(1){ width: 10%; } /* PRECIO */
-      table th:nth-child(2), table td:nth-child(2){ width: 30%; text-align: center; } /* PRODUCTO SENSITIVO - CENTRADO */
-      table th:nth-child(3), table td:nth-child(3){ width: 15%; } /* 07:00 */
-      table th:nth-child(4), table td:nth-child(4){ width: 15%; } /* 12:00 */
-      table th:nth-child(5), table td:nth-child(5){ width: 15%; } /* 15:00 */
-      table th:nth-child(6), table td:nth-child(6){ width: 15%; } /* 22:00 */
-
-      .product-sensitive-header{
-        white-space: normal;
-        line-height: 1.2;
-      }
-    }
-
-    /* Estilos del nuevo submenú */
-    .side-menu {
-      position: fixed;
-      top: 0;
-      left: -300px; /* Oculto fuera de la pantalla */
-      width: 280px;
-      height: 100%;
-      background: var(--primary-color);
-      color: white;
-      padding: 20px;
-      z-index: 1001;
-      box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-      transition: left 0.3s ease-in-out;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .side-menu.open {
-      left: 0; /* Visible */
-    }
-    
-    .side-menu .action-btn {
-      width: 100%;
-      justify-content: flex-start;
-      margin: 0;
-    }
-
-    .hamburger-btn {
-      font-size: 24px;
-      cursor: pointer;
-      color: var(--primary-color);
-      padding: 10px;
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: 1000;
-      display: none;
-    }
-    .overlay.active {
-      display: block;
-    }
-  </style>
+        /* Nuevo Estilo para el Modal */
+        .modal { display: none; /* Oculto por defecto */ position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); animation: fadeIn 0.3s; }
+        .modal-content { background-color: #fff; margin: 15% auto; padding: 20px 30px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.4s ease-out; }
+        .modal-content h2 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
+        .modal-content p { color: var(--secondary-color); font-size: 14px; margin-bottom: 20px; }
+        .modal-icon { font-size: 48px; color: var(--accent-red); margin-bottom: 20px; }
+        .modal-actions { display: flex; justify-content: space-around; gap: 15px; }
+        .modal-actions button { flex: 1; }
+        .close-btn { color: var(--secondary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
+        .close-btn:hover, .close-btn:focus { color: var(--primary-color); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
 </head>
 <body>
-  <div id="splash">
-    <img src="icon-192.png" alt="Logo">
-    <h2>PRODUCTOS SENSITIVOS</h2>
-    <p>Powered by Rafael Ramos</p>
-    <p>Versión 1.0</p>
-  </div>
-
-  <div class="overlay" id="overlay"></div>
-
-  <div class="side-menu" id="sideMenu">
-      <button id="btnExportJson_menu" class="action-btn blue"><i class="fas fa-download"></i> Exportar Datos</button>
-      <button id="btnImportJson_menu" class="action-btn blue"><i class="fas fa-upload"></i> Importar Datos</button>
-  </div>
-
-  <div class="main-content">
-    <div class="container">
-      <header>
-        <i class="fas fa-bars hamburger-btn" id="hamburgerBtn"></i>
-
-        <div class="title-group">
-          <h1>GRUPO RIBA SMITH</h1>
-          <h1>R/S CHITRÉ SELECTO</h1>
-          <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
-        </div>
-      </header>
-
-      <div class="controls-container">
-        <div class="chips" id="chips"></div>
-      </div>
-
-      <div class="actions">
-        <button id="btnAdd" class="action-btn"><i class="fas fa-plus"></i> Agregar Fila</button>
-        <button id="btnExport" class="action-btn green"><i class="fas fa-file-pdf"></i> Generar PDF</button>
-        <button id="btnClear" class="action-btn danger"><i class="fas fa-eraser"></i> Borrar Horarios</button>
-        <button id="btnDeleteRow" class="action-btn danger"><i class="fas fa-trash-alt"></i> Eliminar Fila</button>
-      </div>
-
-      <div class="table-container">
-        <table id="tabla">
-          <thead>
-            <tr>
-              <th>PRECIO</th>
-              <th class="left product-sensitive">PRODUCTO<br>SENSITIVO</th>
-              <th>07:00</th>
-              <th>12:00</th>
-              <th>15:00</th>
-              <th>22:00</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"></tbody>
-        </table>
-      </div>
-
-      <div id="toast" class="toast-container"></div>
+    <div id="splash">
+        <img src="icon-192.png" alt="Logo">
+        <h2>PRODUCTOS SENSITIVOS</h2>
+        <p>Powered by Rafael Ramos</p>
+        <p>Versión 1.5</p>
     </div>
-  </div>
-  
-  <input type="file" id="fileInput" accept=".json" style="display: none;">
 
-  <script>
-    (function () {
-      const DEFAULT_SECCIONES = ['FORMULAS','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','LICORES']; 
-      const STORAGE_KEY = 'productos_sensitivos_por_seccion';
-      let productos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-      let seccionActiva = DEFAULT_SECCIONES[0];
-      let insertIndex = null;
-      let selectedRow = null;
+    <div id="sideMenu" class="side-menu">
+        <button id="btnExportJson_menu" class="action-btn blue"><i class="fas fa-file-export"></i> Exportar Datos</button>
+        <input type="file" id="fileInput" style="display: none;" accept=".json">
+        <button id="btnImportJson_menu" class="action-btn blue"><i class="fas fa-file-import"></i> Importar Datos</button>
+    </div>
+    <div id="overlay" class="overlay"></div>
 
-      const tbody = document.getElementById('tbody');
-      const chipsEl = document.getElementById('chips');
-      const btnExport = document.getElementById('btnExport');
-      const btnClear = document.getElementById('btnClear');
-      const btnAdd = document.getElementById('btnAdd');
-      const btnDeleteRow = document.getElementById('btnDeleteRow');
-      const toastContainer = document.getElementById('toast');
-      
-      const fileInput = document.getElementById('fileInput');
+    <div class="container main-content">
+        <header>
+            <div id="hamburgerBtn" class="hamburger-btn">☰</div>
+            <div class="title-group">
+                <h1>GRUPO RIBA SMITH</h1>
+                <h1>R/S CHITRÉ SELECTO</h1>
+                <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
+            </div>
+        </header>
 
-      // Referencias para los botones en el menú lateral
-      const btnExportJson_menu = document.getElementById('btnExportJson_menu');
-      const btnImportJson_menu = document.getElementById('btnImportJson_menu');
+        <div class="controls-container">
+            <div class="chips" id="chips"></div>
+        </div>
 
-      // Referencias del menú lateral
-      const sideMenu = document.getElementById('sideMenu');
-      const hamburgerBtn = document.getElementById('hamburgerBtn');
-      const overlay = document.getElementById('overlay');
+        <div class="actions">
+            <button id="btnAdd" class="action-btn"><i class="fas fa-plus"></i> Agregar Fila</button>
+            <button id="btnExport" class="action-btn green"><i class="fas fa-file-pdf"></i> Generar PDF</button>
+            <button id="btnClear" class="action-btn danger"><i class="fas fa-eraser"></i> Borrar Horarios</button>
+            <button id="btnDeleteRow" class="action-btn danger"><i class="fas fa-trash-alt"></i> Eliminar Fila</button>
+        </div>
 
-      window.addEventListener("load", () => {
-        setTimeout(() => { document.getElementById("splash").style.opacity = "0"; }, 1500);
-        setTimeout(() => { document.getElementById("splash").style.display = "none"; }, 2000);
-      });
+        <div class="table-container">
+            <table id="tabla">
+                <thead>
+                    <tr>
+                        <th>PRECIO</th>
+                        <th class="left product-sensitive">PRODUCTO<br>SENSITIVO</th>
+                        <th>07:00</th>
+                        <th>12:00</th>
+                        <th>15:00</th>
+                        <th>22:00</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody"></tbody>
+            </table>
+        </div>
 
-      function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(productos)); }
-      function showToast(msg,type='success'){
-        const t=document.createElement('div');t.className=`toast ${type}`;t.textContent=msg;toastContainer.appendChild(t);
-        setTimeout(()=>{t.style.opacity='0';t.style.transform='translateY(20px)';setTimeout(()=>t.remove(),500);},2000);
-      }
+        <div id="toast" class="toast-container"></div>
+    </div>
+    
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <i class="fas fa-trash-alt modal-icon"></i>
+            <h2>¿Eliminar Fila?</h2>
+            <p>Esta acción no se puede deshacer.</p>
+            <div class="modal-actions">
+                <button id="modalConfirmBtn" class="action-btn danger">Confirmar</button>
+                <button id="modalCancelBtn" class="action-btn blue">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="clearModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <i class="fas fa-eraser modal-icon"></i>
+            <h2>¿Borrar Horarios?</h2>
+            <p>Esta acción eliminará todos los horarios de la sección activa.</p>
+            <div class="modal-actions">
+                <button id="clearModalConfirmBtn" class="action-btn danger">Confirmar</button>
+                <button id="clearModalCancelBtn" class="action-btn blue">Cancelar</button>
+            </div>
+        </div>
+    </div>
 
-      function renderChips(){
-        chipsEl.innerHTML='';DEFAULT_SECCIONES.forEach(s=>{
-          const b=document.createElement('div');
-          b.className='chip'+(s===seccionActiva?' active':'');b.textContent=s;
-          b.onclick=()=>{seccionActiva=s;render();};chipsEl.appendChild(b);
-        });
-      }
-
-      function render(){
-        renderChips();tbody.innerHTML='';selectedRow=null;insertIndex=null;
-        const list=productos.filter(p=>p.seccion===seccionActiva);
-        if(!list.length){tbody.innerHTML='<tr><td colspan=6 style="color:#666;text-align:center;padding:20px;">Sin productos en esta sección.</td></tr>';return;}
-        list.forEach((p)=>{
-          const tr=document.createElement('tr');
-          tr.innerHTML=`
-            <td contenteditable="true" data-field="precio">${p.precio||''}</td>
-            <td class="left" contenteditable="true" data-field="nombre">${p.nombre||''}</td>
-            <td><input type="number" data-field="t0700" value="${p.t0700||''}"></td>
-            <td><input type="number" data-field="t1200" value="${p.t1200||''}"></td>
-            <td><input type="number" data-field="t1500" value="${p.t1500||''}"></td>
-            <td><input type="number" data-field="t2200" value="${p.t2200||''}"></td>
-          `;
-          
-          tr.querySelectorAll('[contenteditable="true"]').forEach(td=>{
-            td.addEventListener('input',()=>{
-              const field=td.dataset.field;
-              const index=productos.indexOf(p);
-              productos[index][field]=td.innerText.trim();
-              save();
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado con éxito:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Fallo en el registro de Service Worker:', error);
+                    });
             });
-          });
-          
-          const applyColorAndAlertLogic = (targetInput) => {
-              const currentRowInputs = Array.from(targetInput.closest('tr').querySelectorAll('input[type="number"]'));
-              const currentIndex = currentRowInputs.indexOf(targetInput);
-              
-              const currentValue = parseFloat(targetInput.value);
-              const prevInput = currentRowInputs[currentIndex - 1];
-              const prevValue = prevInput ? parseFloat(prevInput.value) : NaN;
-
-              targetInput.classList.remove('initial-highlight', 'increased', 'decreased');
-
-              if (currentIndex > 0 && !isNaN(currentValue) && !isNaN(prevValue) && prevValue !== 0) {
-                  if (currentValue < prevValue) {
-                      targetInput.classList.add('decreased');
-                      showToast('¡Advertencia! Diferencia detectada.','warning');
-                  } else if (currentValue > prevValue) {
-                      targetInput.classList.add('increased');
-                  }
-              }
-          };
-
-          tr.querySelectorAll('input[type="number"]').forEach((inp, idx) => {
-            applyColorAndAlertLogic(inp); 
-
-            inp.addEventListener('input', () => {
-              const index = productos.indexOf(p);
-              const field = inp.dataset.field;
-              const newValue = inp.value.trim();
-
-              productos[index][field] = newValue;
-              save();
-
-              applyColorAndAlertLogic(inp);
-
-              const currentRowInputs = Array.from(inp.closest('tr').querySelectorAll('input[type="number"]'));
-              const currentIndex = currentRowInputs.indexOf(inp);
-              for (let j = currentIndex + 1; j < currentRowInputs.length; j++) {
-                  applyColorAndAlertLogic(currentRowInputs[j]);
-              }
-            });
-          });
-          
-          tr.addEventListener('click',()=>{if(selectedRow)selectedRow.classList.remove('selected-row');selectedRow=tr;selectedRow.classList.add('selected-row');insertIndex=productos.indexOf(p);});
-          tbody.appendChild(tr);
-        });
-      }
-
-      btnAdd.onclick=()=>{const f={seccion:seccionActiva,precio:'',nombre:'',t0700:'',t1200:'',t1500:'',t2200:''};
-        if(insertIndex!==null){productos.splice(insertIndex+1,0,f);showToast('Fila agregada.','success');}
-        else{productos.push(f);showToast('Fila agregada al final.','success');}
-        save();render();};
-
-      btnDeleteRow.onclick=()=>{if(insertIndex!==null){if(confirm('¿Eliminar esta fila?')){productos.splice(insertIndex,1);save();render();showToast('Fila eliminada.','success');}}
-        else{showToast('Selecciona una fila.','error');}};
-
-      btnClear.onclick=()=>{if(confirm('¿Borrar horarios de la sección?')){productos=productos.map(p=>p.seccion===seccionActiva?{...p,t0700:'',t1200:'',t1500:'',t2200:''}:p);save();render();showToast('Horarios borrados.','success');}};
-
-      btnExport.onclick = () => {
-        if (!productos.length) {
-          showToast('No hay productos para exportar.', 'warning');
-          return;
         }
-
-        const getPdfCellClass = (currentValue, prevValue, isFirstColumn) => {
-          const numCurrent = parseFloat(currentValue);
-          const numPrev = parseFloat(prevValue);
-
-          if (isFirstColumn) {
-            return ''; 
-          } else if (!isNaN(numCurrent) && !isNaN(numPrev) && prevValue !== '') {
-            if (currentValue < prevValue) {
-              return 'decreased';
-            } else if (currentValue > prevValue) {
-              return 'increased';
-            }
-          }
-          return '';
-        };
-
-        let html = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
-        <style>
-          body{font-family:'Poppins', sans-serif; margin:0; padding:0;}
-          
-          .printable-content { padding: 40px 30px; }
-          .pdf-header { text-align: center; margin-bottom: 20px; }
-          .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
-          .pdf-header p { 
-            font-size: 16pt; 
-            font-weight: bold; 
-            margin-top: 5px; 
-            text-align: center; 
-          }
-
-          .pdf-section-title { text-align: center; font-size: 16pt; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
-
-          table { border-collapse: collapse; margin-top: 10px; font-size: 12pt; table-layout: fixed; margin-left: auto; margin-right: auto; width: 90%; }
-          th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-          th { background: #f0f0f0; font-weight: bold; }
-
-          .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-          .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-          .pdf-footer {
-            position: fixed;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-            font-size: 16pt; 
-            font-weight: bold; 
-            color: #666;
-          }
-          .page-break { page-break-before: always; }
-          .print-btn { display:none; }
-
-          table th:nth-child(1), table td:nth-child(1){ width: 10%; } 
-          table th:nth-child(2), table td:nth-child(2){ width: 30%; text-align: center; } 
-          table th:nth-child(3), table td:nth-child(3){ width: 15%; } 
-          table th:nth-child(4), table td:nth-child(4){ width: 15%; } 
-          table th:nth-child(5), table td:nth-child(5){ width: 15%; } 
-          table th:nth-child(6), table td:nth-child(6){ width: 15%; } 
-
-          .product-sensitive-header{
-            white-space: normal;
-            line-height: 1.2;
-          }
-        </style></head><body>`;
         
-        html += `<div class="printable-content">`;
-        html += `<div class="pdf-header">`;
-        html += `<h1>GRUPO RIBA SMITH</h1>`;
-        html += `<h1>R/S CHITRÉ SELECTO</h1>`;
-        html += `<h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>`;
-        html += `<p>Fecha de exportación: ${new Date().toLocaleDateString('es-ES')}</p>`;
-        html += `</div>`;
-
-        const secciones = ['FORMULAS', 'MEDICAMENTOS', 'CAVA', 'PASTILLAS CANINAS', 'LICORES']; 
-
-        secciones.forEach((sec, index) => {
-            const rows = productos.filter(p => p.seccion === sec);
-            if (rows.length) {
-                if (index > 0) {
-                    html += `<div class="page-break"></div>`;
+        (function () {
+            const DEFAULT_SECCIONES = ['FORMULAS','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','LICORES'];
+            const STORAGE_KEY = 'productos_sensitivos_por_seccion';
+            const LAST_UPDATE_KEY = 'last_data_update_date';
+            let productos = [];
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                productos = raw ? JSON.parse(raw) : [];
+                if (!Array.isArray(productos)) productos = [];
+            } catch (e) {
+                console.warn('localStorage JSON corrupto, reiniciando datos:', e);
+                productos = [];
+            }
+            let seccionActiva = DEFAULT_SECCIONES[0];
+            let insertIndex = null;
+            let selectedRow = null;
+            const tbody = document.getElementById('tbody');
+            const chipsEl = document.getElementById('chips');
+            const btnExport = document.getElementById('btnExport');
+            const btnClear = document.getElementById('btnClear');
+            const btnAdd = document.getElementById('btnAdd');
+            const btnDeleteRow = document.getElementById('btnDeleteRow');
+            const toastContainer = document.getElementById('toast');
+            const fileInput = document.getElementById('fileInput');
+            const btnExportJson_menu = document.getElementById('btnExportJson_menu');
+            const btnImportJson_menu = document.getElementById('btnImportJson_menu');
+            const sideMenu = document.getElementById('sideMenu');
+            const hamburgerBtn = document.getElementById('hamburgerBtn');
+            const overlay = document.getElementById('overlay');
+            const deleteModal = document.getElementById('deleteModal');
+            const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+            const modalCancelBtn = document.getElementById('modalCancelBtn');
+            const clearModal = document.getElementById('clearModal');
+            const clearModalConfirmBtn = document.getElementById('clearModalConfirmBtn');
+            const clearModalCancelBtn = document.getElementById('clearModalCancelBtn');
+            const allCloseBtns = document.querySelectorAll('.close-btn');
+            let saveTimer = null;
+            function save() {
+                clearTimeout(saveTimer);
+                saveTimer = setTimeout(() => {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(productos));
+                }, 300);
+            }
+            function migrateDataForNewDay() {
+                const today = new Date().toISOString().slice(0,10);
+                const lastUpdateDate = localStorage.getItem(LAST_UPDATE_KEY);
+                if (today !== lastUpdateDate) {
+                    productos.forEach(p => {
+                        p.t0700 = p.t2200;
+                        p.t1200 = '';
+                        p.t1500 = '';
+                        p.t2200 = '';
+                    });
+                    save();
+                    localStorage.setItem(LAST_UPDATE_KEY, today);
+                    console.log('Datos migrados 22:00 → 07:00 y horarios limpiados, fecha guardada:', today);
                 }
-                html += `<div class="pdf-section-title">${sec}</div>`;
-                html += `<table><thead><tr><th>PRECIO</th><th class="product-sensitive-header">PRODUCTO<br>SENSITIVO</th><th>07:00</th><th>12:00</th><th>15:00</th><th>22:00</th></tr></thead><tbody>`;
-                rows.forEach(r => {
-                    let t0700_val = r.t0700 || '';
-                    let t1200_val = r.t1200 || '';
-                    let t1500_val = r.t1500 || '';
-                    let t2200_val = r.t2200 || '';
-
-                    let class0700 = getPdfCellClass(t0700_val, '', true); 
-                    let class1200 = getPdfCellClass(t1200_val, t0700_val, false);
-                    let class1500 = getPdfCellClass(t1500_val, t1200_val, false);
-                    let class2200 = getPdfCellClass(t2200_val, t1500_val, false);
-                    
-                    html += `<tr>
-                        <td>${r.precio||''}</td>
-                        <td class="product-sensitive-header" style="text-align: center;">${r.nombre||''}</td>
-                        <td class="${class0700}">${t0700_val}</td>
-                        <td class="${class1200}">${t1200_val}</td>
-                        <td class="${class1500}">${t1500_val}</td>
-                        <td class="${class2200}">${t2200_val}</td>
-                    </tr>`;
-                });
-                html += `</tbody></table>`;
             }
-        });
-        
-        html += `<div class="pdf-footer">Powered by Rafael Ramos</div>`;
-        html += `<button class='print-btn' onclick='window.print()'>Guardar como PDF</button>`;
-        html += `</div>`;
-        html += `</body></html>`;
-
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(html);
-        printWindow.document.close();
-        printWindow.focus();
-        setTimeout(() => printWindow.print(), 1000);
-      };
-      
-      const handleExportJson = () => {
-          if (!productos.length) {
-              showToast('No hay datos para exportar.', 'warning');
-              return;
-          }
-          const dataStr = JSON.stringify(productos, null, 2);
-          const blob = new Blob([dataStr], { type: 'application/json' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `backup_productos_sensitivos_${new Date().toLocaleDateString('es-ES').replace(/\//g, '-')}.json`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          showToast('Datos exportados.', 'success');
-      };
-      
-      const handleImportJson = () => {
-          fileInput.click();
-      };
-      
-      btnExportJson_menu.onclick = handleExportJson;
-      btnImportJson_menu.onclick = handleImportJson;
-
-      fileInput.onchange = (event) => {
-          const file = event.target.files[0];
-          if (!file) {
-              return;
-          }
-          const reader = new FileReader();
-          reader.onload = (e) => {
-              try {
-                  const importedData = JSON.parse(e.target.result);
-                  if (Array.isArray(importedData) && importedData.every(item => 'seccion' in item && 'nombre' in item)) {
-                      productos = importedData;
-                      save();
-                      render();
-                      showToast('Datos importados con éxito.', 'success');
-                  } else {
-                      showToast('Archivo JSON no válido.', 'error');
-                  }
-              } catch (error) {
-                  showToast('Error al procesar el archivo.', 'error');
-              } finally {
-                  event.target.value = ''; 
-              }
-          };
-          reader.readAsText(file);
-      };
-
-      hamburgerBtn.addEventListener('click', () => {
-        sideMenu.classList.toggle('open');
-        overlay.classList.toggle('active');
-      });
-
-      overlay.addEventListener('click', () => {
-        sideMenu.classList.remove('open');
-        overlay.classList.remove('active');
-      });
-
-      render();
-    })();
-  </script>
+            function showToast(msg, type = 'success') {
+                const t = document.createElement('div');
+                t.className = `toast ${type}`;
+                t.textContent = msg;
+                toastContainer.appendChild(t);
+                setTimeout(() => {
+                    t.style.opacity = '0';
+                    t.style.transform = 'translateY(20px)';
+                    setTimeout(() => t.remove(), 500);
+                }, 2000);
+            }
+            function renderChips() {
+                chipsEl.innerHTML = '';
+                DEFAULT_SECCIONES.forEach(s => {
+                    const b = document.createElement('div');
+                    b.className = 'chip' + (s === seccionActiva ? ' active' : '');
+                    b.textContent = s;
+                    b.onclick = () => {
+                        seccionActiva = s;
+                        render();
+                    };
+                    chipsEl.appendChild(b);
+                });
+            }
+            const applyColorAndAlertLogic = (targetInput, suppressToast = true) => {
+                const currentRowInputs = Array.from(targetInput.closest('tr').querySelectorAll('input[type="number"]'));
+                const currentIndex = currentRowInputs.indexOf(targetInput);
+                const currentValue = parseFloat(targetInput.value);
+                const prevInput = currentRowInputs[currentIndex - 1];
+                const prevValue = prevInput ? parseFloat(prevInput.value) : NaN;
+                targetInput.classList.remove('initial-highlight', 'increased', 'decreased');
+                if (currentIndex > 0 && !isNaN(currentValue) && !isNaN(prevValue)) {
+                    if (currentValue < prevValue) {
+                        targetInput.classList.add('decreased');
+                        if (!suppressToast) showToast('¡Advertencia! Diferencia detectada.', 'warning');
+                    } else if (currentValue > prevValue) {
+                        targetInput.classList.add('increased');
+                    }
+                }
+            };
+            function createRowElement(p) {
+                const tr = document.createElement('tr');
+                const tdPrecio = document.createElement('td');
+                tdPrecio.contentEditable = "true";
+                tdPrecio.dataset.field = "precio";
+                tdPrecio.textContent = p.precio || '';
+                tr.appendChild(tdPrecio);
+                const tdNombre = document.createElement('td');
+                tdNombre.className = 'left';
+                tdNombre.contentEditable = "true";
+                tdNombre.dataset.field = "nombre";
+                tdNombre.textContent = p.nombre || '';
+                tr.appendChild(tdNombre);
+                ['t0700','t1200','t1500','t2200'].forEach(field => {
+                    const td = document.createElement('td');
+                    const inp = document.createElement('input');
+                    inp.type = 'number';
+                    inp.dataset.field = field;
+                    inp.value = p[field] || '';
+                    td.appendChild(inp);
+                    tr.appendChild(td);
+                });
+                return tr;
+            }
+            function render() {
+                migrateDataForNewDay();
+                renderChips();
+                tbody.innerHTML = '';
+                selectedRow = null;
+                insertIndex = null;
+                const list = productos.filter(p => p.seccion === seccionActiva);
+                if (!list.length) {
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.colSpan = 6;
+                    td.style.color = '#666';
+                    td.style.textAlign = 'center';
+                    td.style.padding = '20px';
+                    td.textContent = 'Sin productos en esta sección.';
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+                    return;
+                }
+                list.forEach(p => {
+                    const tr = createRowElement(p);
+                    tr.querySelectorAll('[contenteditable="true"]').forEach(td => {
+                        td.addEventListener('blur', () => {
+                            const field = td.dataset.field;
+                            const index = productos.indexOf(p);
+                            if (index > -1) {
+                                productos[index][field] = td.innerText.trim();
+                                save();
+                            }
+                        });
+                    });
+                    const inputs = Array.from(tr.querySelectorAll('input[type="number"]'));
+                    inputs.forEach((inp, idx) => {
+                        applyColorAndAlertLogic(inp, true);
+                        inp.addEventListener('input', () => {
+                            const index = productos.indexOf(p);
+                            const field = inp.dataset.field;
+                            const newValue = inp.value.trim();
+                            if (index > -1) {
+                                productos[index][field] = newValue;
+                                save();
+                                applyColorAndAlertLogic(inp, false);
+                                const currentRowInputs = Array.from(inp.closest('tr').querySelectorAll('input[type="number"]'));
+                                const currentIndex = currentRowInputs.indexOf(inp);
+                                for (let j = currentIndex + 1; j < currentRowInputs.length; j++) {
+                                    applyColorAndAlertLogic(currentRowInputs[j], true);
+                                }
+                            }
+                        });
+                    });
+                    tr.addEventListener('click', () => {
+                        if (selectedRow) selectedRow.classList.remove('selected-row');
+                        selectedRow = tr;
+                        selectedRow.classList.add('selected-row');
+                        insertIndex = productos.indexOf(p);
+                    });
+                    tbody.appendChild(tr);
+                });
+            }
+            btnAdd.onclick = () => {
+                const f = { seccion: seccionActiva, precio: '', nombre: '', t0700: '', t1200: '', t1500: '', t2200: '' };
+                if (insertIndex !== null) {
+                    productos.splice(insertIndex + 1, 0, f);
+                    showToast('Fila agregada.', 'success');
+                } else {
+                    productos.push(f);
+                    showToast('Fila agregada al final.', 'success');
+                }
+                save();
+                render();
+            };
+            btnDeleteRow.onclick = () => {
+                if (insertIndex !== null) {
+                    deleteModal.style.display = 'block';
+                } else {
+                    showToast('Selecciona una fila.', 'error');
+                }
+            };
+            btnClear.onclick = () => {
+                clearModal.style.display = 'block';
+            };
+            modalConfirmBtn.onclick = () => {
+                if (insertIndex !== null) {
+                    productos.splice(insertIndex, 1);
+                    save();
+                    render();
+                    showToast('Fila eliminada.', 'success');
+                    deleteModal.style.display = 'none';
+                }
+            };
+            modalCancelBtn.onclick = () => {
+                deleteModal.style.display = 'none';
+            };
+            clearModalConfirmBtn.onclick = () => {
+                productos = productos.map(p => p.seccion === seccionActiva ? { ...p, t0700: '', t1200: '', t1500: '', t2200: '' } : p);
+                save();
+                render();
+                showToast('Horarios borrados.', 'success');
+                clearModal.style.display = 'none';
+            };
+            clearModalCancelBtn.onclick = () => {
+                clearModal.style.display = 'none';
+            };
+            allCloseBtns.forEach(btn => {
+                btn.onclick = (event) => {
+                    btn.closest('.modal').style.display = 'none';
+                };
+            });
+            window.onclick = (event) => {
+                if (event.target === deleteModal) {
+                    deleteModal.style.display = 'none';
+                }
+                if (event.target === clearModal) {
+                    clearModal.style.display = 'none';
+                }
+            };
+            function getPdfCellClass(currentValue, prevValue, isFirstColumn) {
+                const numCurrent = parseFloat(currentValue);
+                const numPrev = parseFloat(prevValue);
+                if (isFirstColumn) return '';
+                if (!isNaN(numCurrent) && !isNaN(numPrev)) {
+                    if (numCurrent < numPrev) return 'decreased';
+                    if (numCurrent > numPrev) return 'increased';
+                }
+                return '';
+            }
+            btnExport.onclick = () => {
+                if (!productos.length) {
+                    showToast('No hay productos para exportar.', 'warning');
+                    return;
+                }
+                const secciones = DEFAULT_SECCIONES;
+                let contentHtml = '';
+                secciones.forEach((sec) => {
+                    const rows = productos.filter(p => p.seccion === sec);
+                    if (rows.length) {
+                        contentHtml += `<div class="pdf-section-container">`;
+                        contentHtml += `<div class="pdf-section-title">${sec}</div>`;
+                        contentHtml += `<table><thead><tr><th>PRECIO</th><th class="product-sensitive-header">PRODUCTO<br>SENSITIVO</th><th>07:00</th><th>12:00</th><th>15:00</th><th>22:00</th></tr></thead><tbody>`;
+                        rows.forEach(r => {
+                            let t0700_val = r.t0700 || '';
+                            let t1200_val = r.t1200 || '';
+                            let t1500_val = r.t1500 || '';
+                            let t2200_val = r.t2200 || '';
+                            let class0700 = getPdfCellClass(t0700_val, '', true);
+                            let class1200 = getPdfCellClass(t1200_val, t0700_val, false);
+                            let class1500 = getPdfCellClass(t1500_val, t1200_val, false);
+                            let class2200 = getPdfCellClass(t2200_val, t1500_val, false);
+                            contentHtml += `<tr>
+                                <td>${r.precio || ''}</td>
+                                <td class="product-sensitive-header" style="text-align: center;">${r.nombre || ''}</td>
+                                <td class="${class0700}">${t0700_val}</td>
+                                <td class="${class1200}">${t1200_val}</td>
+                                <td class="${class1500}">${t1500_val}</td>
+                                <td class="${class2200}">${t2200_val}</td>
+                            </tr>`;
+                        });
+                        contentHtml += `</tbody></table>`;
+                        contentHtml += `<div class="pdf-footer">Powered by Rafael Ramos</div>`;
+                        contentHtml += `</div>`;
+                    }
+                });
+                const hoyISO = new Date().toISOString().slice(0,10);
+                let fullHtml = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
+                    <style>
+                        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; }
+                        .printable-content { padding: 40px 30px; }
+                        .pdf-header { text-align: center; margin-bottom: 20px; }
+                        .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
+                        .pdf-header p { font-size: 16pt; font-weight: bold; margin-top: 5px; text-align: center; }
+                        .pdf-section-title { text-align: center; font-size: 16pt; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
+                        table { border-collapse: collapse; margin-top: 10px; font-size: 12pt; table-layout: fixed; margin-left: auto; margin-right: auto; width: 90%; margin-bottom: 50px; }
+                        table:last-of-type { margin-bottom: 20px; }
+                        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
+                        th { background: #f0f0f0; font-weight: bold; }
+                        .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                        .pdf-footer { text-align: center; font-size: 16pt; font-weight: bold; color: #666; margin-top: 20px; position: relative; }
+                        .pdf-section-container { page-break-after: always; }
+                        .pdf-section-container:last-of-type { page-break-after: avoid; }
+                        .print-btn { display:none; }
+                    </style>
+                </head><body>`;
+                fullHtml += `<div class="printable-content">`;
+                fullHtml += `<div class="pdf-header">`;
+                fullHtml += `<h1>GRUPO RIBA SMITH</h1>`;
+                fullHtml += `<h1>R/S CHITRÉ SELECTO</h1>
+                <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
+                <p>Fecha de exportación: ${hoyISO}</p>
+                </div>
+                ${contentHtml}
+                </div>
+                <button class='print-btn' onclick='window.print()'>Guardar como PDF</button>
+                </body>
+                </html>`;
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(fullHtml);
+                printWindow.document.close();
+                printWindow.focus();
+                setTimeout(() => printWindow.print(), 1000);
+            };
+            const handleExportJson = () => {
+                if (!productos.length) {
+                    showToast('No hay datos para exportar.', 'warning');
+                    return;
+                }
+                const dataStr = JSON.stringify(productos, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `backup_productos_sensitivos_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('Datos exportados.', 'success');
+            };
+            const handleImportJson = () => {
+                fileInput.click();
+            };
+            btnExportJson_menu.onclick = handleExportJson;
+            btnImportJson_menu.onclick = handleImportJson;
+            fileInput.onchange = (event) => {
+                const file = event.target.files[0];
+                if (!file) {
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        if (Array.isArray(importedData) && importedData.every(item => 'seccion' in item && 'nombre' in item)) {
+                            productos = importedData;
+                            save();
+                            render();
+                            showToast('Datos importados con éxito.', 'success');
+                        } else {
+                            showToast('Archivo JSON no válido.', 'error');
+                        }
+                    } catch (error) {
+                        showToast('Error al procesar el archivo.', 'error');
+                    } finally {
+                        event.target.value = '';
+                    }
+                };
+                reader.readAsText(file);
+            };
+            hamburgerBtn.addEventListener('click', () => {
+                sideMenu.classList.toggle('open');
+                overlay.classList.toggle('active');
+            });
+            overlay.addEventListener('click', () => {
+                sideMenu.classList.remove('open');
+                overlay.classList.remove('active');
+            });
+            window.addEventListener("load", () => {
+                setTimeout(() => { document.getElementById("splash").style.opacity = "0"; }, 1500);
+                setTimeout(() => { document.getElementById("splash").style.display = "none"; }, 2000);
+                render();
+            });
+        })();
+    </script>
 </body>
 </html>

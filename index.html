@@ -464,7 +464,14 @@
                         contentHtml += `</div>`;
                     }
                 });
-                const hoyISO = new Date().toISOString().slice(0,10);
+
+                // Formato de fecha a día/mes/año
+                const today = new Date();
+                const day = String(today.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const year = today.getFullYear();
+                const formattedDate = `${day}/${month}/${year}`;
+
                 let fullHtml = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
                     <style>
                         body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; }
@@ -490,7 +497,7 @@
                 fullHtml += `<h1>GRUPO RIBA SMITH</h1>`;
                 fullHtml += `<h1>R/S CHITRÉ SELECTO</h1>
                 <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
-                <p>Fecha de exportación: ${hoyISO}</p>
+                <p>Fecha de exportación: ${formattedDate}</p>
                 </div>
                 ${contentHtml}
                 </div>

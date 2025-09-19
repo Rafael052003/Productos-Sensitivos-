@@ -200,7 +200,6 @@
         (function () {
             const DEFAULT_SECCIONES = ['FORMULAS','MEDICAMENTOS','CAVA','PASTILLAS CANINAS','LICORES'];
             const STORAGE_KEY = 'productos_sensitivos_por_seccion';
-            const LAST_UPDATE_KEY = 'last_data_update_date';
             let productos = [];
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
@@ -239,21 +238,6 @@
                 saveTimer = setTimeout(() => {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(productos));
                 }, 300);
-            }
-            function migrateDataForNewDay() {
-                const today = new Date().toISOString().slice(0,10);
-                const lastUpdateDate = localStorage.getItem(LAST_UPDATE_KEY);
-                if (today !== lastUpdateDate) {
-                    productos.forEach(p => {
-                        p.t0700 = p.t2200;
-                        p.t1200 = '';
-                        p.t1500 = '';
-                        p.t2200 = '';
-                    });
-                    save();
-                    localStorage.setItem(LAST_UPDATE_KEY, today);
-                    console.log('Datos migrados 22:00 → 07:00 y horarios limpiados, fecha guardada:', today);
-                }
             }
             function showToast(msg, type = 'success') {
                 const t = document.createElement('div');
@@ -320,7 +304,6 @@
                 return tr;
             }
             function render() {
-                migrateDataForNewDay();
                 renderChips();
                 tbody.innerHTML = '';
                 selectedRow = null;

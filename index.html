@@ -10,22 +10,121 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        :root { --primary-color: #111827; --secondary-color: #374151; --bg-light: #f4f5f7; --accent-green: #0A7456; --accent-red: #E34F4F; --highlight-yellow: #fff2b0; --highlight-green: #d4edda; --highlight-red: #f8d7da; }
+        /* Paleta y estilos principales del código original */
+        :root {
+            --primary-color: #111827;
+            --secondary-color: #374151;
+            --bg-light: #f4f5f7;
+            --accent-green: #0A7456;
+            --accent-red: #E34F4F;
+            --highlight-yellow: #fff2b0;
+            --highlight-green: #d4edda;
+            --highlight-red: #f8d7da;
+            --border-color: #e5e7eb;
+        }
+
+        /* Estilos generales y resets */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg-light); color: var(--primary-color); padding: 0; }
-        .main-content { padding: 20px; }
-        .container { max-width: 960px; margin: 0 auto; }
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary-color); color: #fff; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease-out; }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-light);
+            color: var(--primary-color);
+            padding-bottom: 80px;
+            line-height: 1.6;
+        }
+        .main-content {
+            padding: 20px;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* Splash Screen */
+        #splash {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary-color); color: #fff;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
         #splash img { width: 120px; margin-bottom: 20px; }
         #splash h2 { font-weight: bold; font-size: 24px; margin-bottom: 10px; }
         #splash p { margin-top: 5px; font-size: 14px; opacity: 0.9; }
-        header { text-align: center; margin-bottom: 24px; display: flex; align-items: center; position: relative; padding-left: 60px; padding-right: 20px; }
-        .title-group { flex-grow: 1; display: flex; flex-direction: column; align-items: center; }
-        .title-group h1 { font-size: 24px; font-weight: 700; margin: 2px 0; color: var(--primary-color); text-transform: uppercase; }
-        @media (max-width: 600px) { .title-group h1 { font-size: 18px; } }
+
+        /* Header & Titles */
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-left: 60px;
+            padding-right: 20px;
+        }
+        .title-group {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .title-group h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 2px 0;
+            color: var(--primary-color);
+            text-transform: uppercase;
+        }
+        @media (max-width: 600px) {
+            .title-group h1 { font-size: 18px; }
+        }
+        .hamburger-btn {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--primary-color);
+            padding: 10px;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Side Menu */
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: -300px;
+            width: 280px;
+            height: 100%;
+            background: var(--primary-color);
+            color: white;
+            padding: 20px;
+            z-index: 1001;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+            transition: left 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .side-menu.open { left: 0; }
+        .side-menu .action-btn { width: 100%; justify-content: flex-start; margin: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; }
+        .overlay.active { display: block; }
+
+        /* Chips & Actions */
         .controls-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
         .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 20px; }
-        .action-btn { background: var(--primary-color); color: white; border: 0; padding: 12px 24px; border-radius: 999px; cursor: pointer; font-weight: 600; transition: all 0.2s ease-in-out; display: flex; align-items: center; gap: 8px; }
+        .action-btn {
+            background: var(--primary-color);
+            color: white;
+            border: 0;
+            padding: 12px 24px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .action-btn:hover { background: var(--secondary-color); transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .action-btn.danger { background: var(--accent-red); }
         .action-btn.danger:hover { background: #dc2626; }
@@ -34,11 +133,52 @@
         .action-btn.blue { background: #3b82f6; }
         .action-btn.blue:hover { background: #2563eb; }
         .chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-        .chip { padding: 8px 16px; border-radius: 999px; cursor: pointer; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.2s ease-in-out; font-size: 14px; }
+        .chip {
+            padding: 8px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s ease-in-out;
+            font-size: 14px;
+        }
         .chip.active { background: var(--primary-color); color: white; }
-        .table-container { overflow-x: auto; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-radius: 8px; }
-        table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; background: white; border-radius: 8px; overflow: hidden; }
-        th, td { border: 1px solid #e5e7eb; padding: 12px; text-align: center; }
+        
+        /* Nuevo estilo para el recuadro de fecha */
+        .date-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .date-container label {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .date-container input[type="date"] {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 14px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td { border: 1px solid var(--border-color); padding: 12px; text-align: center; }
         th { background: #f3f4f6; font-weight: 600; white-space: nowrap; }
         td.left { text-align: left; }
         th.product-sensitive { white-space: normal; line-height: 1.2; }
@@ -48,16 +188,114 @@
         .initial-highlight { background-color: var(--highlight-yellow) !important; }
         .increased { background-color: var(--highlight-green) !important; }
         .decreased { background-color: var(--highlight-red) !important; }
+
+        /* Toast notifications */
         .toast-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column-reverse; gap: 10px; z-index: 1000; }
         .toast { padding: 12px 20px; border-radius: 8px; color: white; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.2); opacity: 0; transform: translateY(20px); animation: slideIn 0.5s forwards; }
         .toast.success { background-color: var(--accent-green); }
         .toast.warning { background-color: #ff9800; }
         .toast.error { background-color: var(--accent-red); }
         @keyframes slideIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
-        /* Estilos para el PDF/Impresión */
+        
+        /* Modals */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            animation: fadeIn 0.3s;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content.large-text {
+            max-width: 600px;
+            text-align: left;
+            padding: 25px 40px;
+        }
+        .modal-content h2 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
+        .modal-content p, .modal-content li { color: var(--secondary-color); font-size: 14px; line-height: 1.6; }
+        .modal-content p { margin-bottom: 20px; }
+        .modal-content ul { padding-left: 20px; margin-bottom: 20px; }
+        .modal-content li { margin-bottom: 10px; }
+        .modal-icon { font-size: 48px; color: var(--accent-red); margin-bottom: 20px; }
+        .modal-actions { display: flex; justify-content: space-around; gap: 15px; }
+        .modal-actions button { flex: 1; }
+        .close-btn { color: var(--secondary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; cursor: pointer; transition: color 0.2s; }
+        .close-btn:hover, .close-btn:focus { color: var(--primary-color); }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes scaleIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--secondary-color);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+        }
+        .footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .footer a:hover {
+            color: var(--primary-color);
+        }
+        .footer .links a, .footer .social-links a {
+            padding: 0 5px;
+        }
+        .footer .divider {
+            color: var(--secondary-color);
+            margin: 0 5px;
+        }
+        .footer .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        .footer .social-links a i {
+            font-size: 18px;
+            color: var(--primary-color);
+        }
+        .footer .social-links a:hover i {
+            color: #3b82f6;
+        }
+        .footer .version-info {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        /* Print Styles */
         @media print {
             body { padding: 0; font-family: 'Poppins', sans-serif; font-size: 12pt; }
-            .container, header, .controls, .chips, .actions { display: none; }
+            .main-content, header, .controls, .chips, .actions, .toast-container, .side-menu, .overlay, .modal, .footer { display: none; }
             .printable-content { display: block !important; padding: 0; }
             .pdf-header { text-align: center; margin-bottom: 20px; }
             .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
@@ -73,42 +311,15 @@
             .pdf-section-container { page-break-after: always; }
             .pdf-section-container:last-of-type { page-break-after: avoid; }
             .print-btn { display:none; }
-            table th:nth-child(1), table td:nth-child(1){ width: 10%; }
-            table th:nth-child(2), table td:nth-child(2){ width: 30%; text-align: center; }
-            table th:nth-child(3), table td:nth-child(3){ width: 15%; }
-            table th:nth-child(4), table td:nth-child(4){ width: 15%; }
-            table th:nth-child(5), table td:nth-child(5){ width: 15%; }
-            table th:nth-child(6), table td:nth-child(6){ width: 15%; }
-            .product-sensitive-header{ white-space: normal; line-height: 1.2; }
         }
-        /* Estilos del nuevo submenú */
-        .side-menu { position: fixed; top: 0; left: -300px; width: 280px; height: 100%; background: var(--primary-color); color: white; padding: 20px; z-index: 1001; box-shadow: 2px 0 5px rgba(0,0,0,0.5); transition: left 0.3s ease-in-out; display: flex; flex-direction: column; gap: 10px; }
-        .side-menu.open { left: 0; }
-        .side-menu .action-btn { width: 100%; justify-content: flex-start; margin: 0; }
-        .hamburger-btn { font-size: 24px; cursor: pointer; color: var(--primary-color); padding: 10px; position: absolute; left: 0; top: 50%; transform: translateY(-50%); }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; }
-        .overlay.active { display: block; }
-
-        /* Nuevo Estilo para el Modal */
-        .modal { display: none; /* Oculto por defecto */ position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6); animation: fadeIn 0.3s; }
-        .modal-content { background-color: #fff; margin: 15% auto; padding: 20px 30px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; position: relative; box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.4s ease-out; }
-        .modal-content h2 { color: var(--primary-color); font-size: 24px; margin-bottom: 10px; }
-        .modal-content p { color: var(--secondary-color); font-size: 14px; margin-bottom: 20px; }
-        .modal-icon { font-size: 48px; color: var(--accent-red); margin-bottom: 20px; }
-        .modal-actions { display: flex; justify-content: space-around; gap: 15px; }
-        .modal-actions button { flex: 1; }
-        .close-btn { color: var(--secondary-color); position: absolute; top: 15px; right: 25px; font-size: 28px; font-weight: bold; cursor: pointer; transition: color 0.2s; }
-        .close-btn:hover, .close-btn:focus { color: var(--primary-color); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
     <div id="splash">
         <img src="icon-192.png" alt="Logo">
         <h2>PRODUCTOS SENSITIVOS</h2>
-        <p>Powered by Rafael Ramos</p>
-        <p>Versión 1.5</p>
+        <p>Powered by Rafael Ramos.</p>
+        <p>Versión 2.0</p>
     </div>
 
     <div id="sideMenu" class="side-menu">
@@ -127,6 +338,11 @@
                 <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
             </div>
         </header>
+
+        <div class="date-container">
+            <label for="review-date">Fecha de Revisión:</label>
+            <input type="date" id="review-date">
+        </div>
 
         <div class="controls-container">
             <div class="chips" id="chips"></div>
@@ -184,6 +400,58 @@
         </div>
     </div>
 
+    <div id="termsModal" class="modal">
+        <div class="modal-content large-text">
+            <span class="close-btn">&times;</span>
+            <h2>Términos y Condiciones</h2>
+            <p>
+                Este sistema de listado y control de producto es una herramienta interna y exclusiva, propiedad de Rafael Ramos, diseñada para el personal de seguridad de la sucursal R/S Chitré Selecto.
+            </p>
+            <p>
+                Al utilizar esta aplicación, usted reconoce y acepta los siguientes términos:
+            </p>
+            <ul>
+                <li><strong>Uso del Sistema:</strong> La aplicación está destinada únicamente para la gestión de productos sensitivos y el control de los mismos, como parte de las funciones laborales asignadas. Cualquier otro uso está estrictamente prohibido.</li>
+                <li><strong>Confidencialidad y Propiedad de Datos:</strong> Los datos registrados, incluyendo precios, nombres de productos y cualquier otra información ingresada, son propiedad exclusiva de R/S Chitré Selecto. Esta información es confidencial y no debe ser divulgada a terceros.</li>
+                <li><strong>Precisión de la Información:</strong> Usted es responsable de garantizar que la información que ingresa sea veraz, precisa y completa. Cualquier registro falso, inexacto o incompleto es de su única responsabilidad y podría ser sujeto a medidas disciplinarias.</li>
+                <li><strong>Propiedad Intelectual:</strong> La aplicación, incluyendo su código fuente, diseño, interfaz y contenido, es propiedad intelectual de Rafael Ramos y se prohíbe su copia, distribución o modificación sin autorización expresa.</li>
+                <li><strong>Limitación de Responsabilidad:</strong> Rafael Ramos no se hace responsable por daños directos o indirectos, pérdidas o inconvenientes que surjan del uso o la imposibilidad de usar esta aplicación, incluyendo fallas técnicas o errores humanos.</li>
+                <li><strong>Modificaciones a los Términos:</strong> Nos reservamos el derecho de actualizar, modificar o reemplazar estos términos y condiciones en cualquier momento. El uso continuado de la aplicación después de cualquier modificación constituye su aceptación de los nuevos términos.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="privacyModal" class="modal">
+        <div class="modal-content large-text">
+            <span class="close-btn">&times;</span>
+            <h2>Política de Privacidad</h2>
+            <p>
+                Esta Política de Privacidad describe cómo se recopila, utiliza y protege la información en la aplicación "PRODUCTOS SENSITIVOS" para la sucursal R/S Chitré Selecto.
+            </p>
+            <p>
+                <strong>Información Recopilada:</strong> La aplicación registra precios y nombres de productos, junto con los horarios de control. Esta información es de uso exclusivo para la gestión interna de la empresa y no incluye datos personales sensibles del usuario.
+            </p>
+            <p>
+                <strong>Uso de la Información:</strong> La información recopilada se utiliza únicamente para el monitoreo, control de inventario y seguridad interna. No se comparte, vende ni distribuye a terceros externos a la organización.
+            </p>
+            <p>
+                <strong>Protección de Datos:</strong> Se toman medidas de seguridad para proteger los datos contra el acceso no autorizado. Los datos se almacenan de forma local en el dispositivo del usuario para garantizar la confidencialidad.
+            </p>
+            <p>
+                <strong>Cambios en la Política:</strong> Nos reservamos el derecho de modificar esta Política de Privacidad. Se notificará a los usuarios sobre cualquier cambio a través de la propia aplicación.
+            </p>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="links">
+            <a href="#" id="openTermsModal">Términos y Condiciones</a>
+            <span class="divider">|</span>
+            <a href="#" id="openPrivacyModal">Política de Privacidad</a>
+        </div>
+        <p>© 2025 Rafael Ramos. Todos los derechos reservados.</p>
+    </footer>
+
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -231,7 +499,13 @@
             const clearModal = document.getElementById('clearModal');
             const clearModalConfirmBtn = document.getElementById('clearModalConfirmBtn');
             const clearModalCancelBtn = document.getElementById('clearModalCancelBtn');
+            const termsModal = document.getElementById('termsModal');
+            const openTermsModalBtn = document.getElementById('openTermsModal');
+            const privacyModal = document.getElementById('privacyModal');
+            const openPrivacyModalBtn = document = document.getElementById('openPrivacyModal');
             const allCloseBtns = document.querySelectorAll('.close-btn');
+            const reviewDateInput = document.getElementById('review-date');
+            
             let saveTimer = null;
             function save() {
                 clearTimeout(saveTimer);
@@ -250,6 +524,28 @@
                     setTimeout(() => t.remove(), 500);
                 }, 2000);
             }
+
+            // MODIFICACIÓN: Función para verificar diferencias en una sección (sólo muestra advertencia)
+            function checkDifferencesInActiveSection() {
+                const list = productos.filter(p => p.seccion === seccionActiva);
+                const timeFields = ['t0700', 't1200', 't1500', 't2200'];
+                
+                for (const p of list) {
+                    for (let i = 1; i < timeFields.length; i++) {
+                        const currentVal = parseFloat(p[timeFields[i]]);
+                        const prevVal = parseFloat(p[timeFields[i - 1]]);
+                        
+                        // Verifica si el valor actual es menor que el anterior (decremento)
+                        if (!isNaN(currentVal) && !isNaN(prevVal) && currentVal < prevVal) {
+                            // MODIFICACIÓN: Texto simplificado: "¡Advertencia! Diferencia detectada."
+                            showToast('¡Advertencia! Diferencia detectada.', 'warning');
+                            return; 
+                        }
+                    }
+                }
+            }
+            // FIN MODIFICACIÓN
+            
             function renderChips() {
                 chipsEl.innerHTML = '';
                 DEFAULT_SECCIONES.forEach(s => {
@@ -257,8 +553,13 @@
                     b.className = 'chip' + (s === seccionActiva ? ' active' : '');
                     b.textContent = s;
                     b.onclick = () => {
-                        seccionActiva = s;
-                        render();
+                        const previousSection = seccionActiva;
+                        if (s !== previousSection) {
+                            seccionActiva = s;
+                            render();
+                            // Llamar a la función de verificación al cambiar de sección
+                            checkDifferencesInActiveSection();
+                        }
                     };
                     chipsEl.appendChild(b);
                 });
@@ -273,12 +574,15 @@
                 if (currentIndex > 0 && !isNaN(currentValue) && !isNaN(prevValue)) {
                     if (currentValue < prevValue) {
                         targetInput.classList.add('decreased');
+                        // MODIFICACIÓN: Texto simplificado: "¡Advertencia! Diferencia detectada."
                         if (!suppressToast) showToast('¡Advertencia! Diferencia detectada.', 'warning');
                     } else if (currentValue > prevValue) {
                         targetInput.classList.add('increased');
                     }
                 }
             };
+            // FIN MODIFICACIÓN
+
             function createRowElement(p) {
                 const tr = document.createElement('tr');
                 const tdPrecio = document.createElement('td');
@@ -375,13 +679,13 @@
             };
             btnDeleteRow.onclick = () => {
                 if (insertIndex !== null) {
-                    deleteModal.style.display = 'block';
+                    deleteModal.style.display = 'flex';
                 } else {
                     showToast('Selecciona una fila.', 'error');
                 }
             };
             btnClear.onclick = () => {
-                clearModal.style.display = 'block';
+                clearModal.style.display = 'flex';
             };
             modalConfirmBtn.onclick = () => {
                 if (insertIndex !== null) {
@@ -405,19 +709,28 @@
             clearModalCancelBtn.onclick = () => {
                 clearModal.style.display = 'none';
             };
+            
             allCloseBtns.forEach(btn => {
-                btn.onclick = (event) => {
-                    btn.closest('.modal').style.display = 'none';
-                };
+                btn.onclick = () => { btn.closest('.modal').style.display = 'none'; };
             });
-            window.onclick = (event) => {
-                if (event.target === deleteModal) {
-                    deleteModal.style.display = 'none';
-                }
-                if (event.target === clearModal) {
-                    clearModal.style.display = 'none';
-                }
+
+            openTermsModalBtn.onclick = (e) => {
+                e.preventDefault();
+                termsModal.style.display = 'flex';
             };
+
+            openPrivacyModalBtn.onclick = (e) => {
+                e.preventDefault();
+                privacyModal.style.display = 'flex';
+            };
+
+            window.onclick = (event) => {
+                if (event.target === deleteModal) deleteModal.style.display = 'none';
+                if (event.target === clearModal) clearModal.style.display = 'none';
+                if (event.target === termsModal) termsModal.style.display = 'none';
+                if (event.target === privacyModal) privacyModal.style.display = 'none';
+            };
+
             function getPdfCellClass(currentValue, prevValue, isFirstColumn) {
                 const numCurrent = parseFloat(currentValue);
                 const numPrev = parseFloat(prevValue);
@@ -435,6 +748,15 @@
                 }
                 const secciones = DEFAULT_SECCIONES;
                 let contentHtml = '';
+                const reviewDateValue = reviewDateInput.value;
+                let formattedReviewDate;
+                if (reviewDateValue) {
+                    const [y, m, d] = reviewDateValue.split('-');
+                    formattedReviewDate = `${d}/${m}/${y}`;
+                } else {
+                    formattedReviewDate = 'N/A';
+                }
+
                 secciones.forEach((sec) => {
                     const rows = productos.filter(p => p.seccion === sec);
                     if (rows.length) {
@@ -452,7 +774,7 @@
                             let class2200 = getPdfCellClass(t2200_val, t1500_val, false);
                             contentHtml += `<tr>
                                 <td>${r.precio || ''}</td>
-                                <td class="product-sensitive-header" style="text-align: center;">${r.nombre || ''}</td>
+                                <td class="product-sensitive-header" style="text-align: left;">${r.nombre || ''}</td>
                                 <td class="${class0700}">${t0700_val}</td>
                                 <td class="${class1200}">${t1200_val}</td>
                                 <td class="${class1500}">${t1500_val}</td>
@@ -460,18 +782,16 @@
                             </tr>`;
                         });
                         contentHtml += `</tbody></table>`;
-                        contentHtml += `<div class="pdf-footer">Powered by Rafael Ramos</div>`;
                         contentHtml += `</div>`;
                     }
                 });
-
-                // Formato de fecha a día/mes/año
+                
                 const today = new Date();
                 const day = String(today.getDate()).padStart(2, '0');
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const year = today.getFullYear();
                 const formattedDate = `${day}/${month}/${year}`;
-
+                
                 let fullHtml = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
                     <style>
                         body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; }
@@ -497,11 +817,11 @@
                 fullHtml += `<h1>GRUPO RIBA SMITH</h1>`;
                 fullHtml += `<h1>R/S CHITRÉ SELECTO</h1>
                 <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
-                <p>Fecha de exportación: ${formattedDate}</p>
+                <p>Fecha de Revisión: ${formattedReviewDate}</p>
                 </div>
                 ${contentHtml}
+                <div class="pdf-footer">Powered by Rafael Ramos</div>
                 </div>
-                <button class='print-btn' onclick='window.print()'>Guardar como PDF</button>
                 </body>
                 </html>`;
                 const printWindow = window.open('', '_blank');
@@ -565,10 +885,24 @@
                 sideMenu.classList.remove('open');
                 overlay.classList.remove('active');
             });
+
+            function getTodayDateFormattedForInput() {
+                const today = new Date();
+                const year = today.getFullYear();
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const day = String(today.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            }
+
             window.addEventListener("load", () => {
                 setTimeout(() => { document.getElementById("splash").style.opacity = "0"; }, 1500);
                 setTimeout(() => { document.getElementById("splash").style.display = "none"; }, 2000);
+                if (!reviewDateInput.value) {
+                    reviewDateInput.value = getTodayDateFormattedForInput();
+                }
                 render();
+                // Llamar a la función de verificación al cargar por primera vez
+                checkDifferencesInActiveSection();
             });
         })();
     </script>

@@ -9,6 +9,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         /* Paleta y estilos principales del código original */
         :root {
@@ -292,26 +296,28 @@
             color: #9ca3af;
         }
 
-        /* Print Styles */
-        @media print {
-            body { padding: 0; font-family: 'Poppins', sans-serif; font-size: 12pt; }
-            .main-content, header, .controls, .chips, .actions, .toast-container, .side-menu, .overlay, .modal, .footer { display: none; }
-            .printable-content { display: block !important; padding: 0; }
-            .pdf-header { text-align: center; margin-bottom: 20px; }
-            .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
-            .pdf-header p { font-size: 16pt; font-weight: bold; margin-top: 5px; text-align: center; }
-            .pdf-section-title { text-align: center; font-size: 16pt; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
-            table { border-collapse: collapse; margin-top: 10px; font-size: 12pt; table-layout: fixed; margin-left: auto; margin-right: auto; width: 90%; margin-bottom: 50px; }
-            table:last-of-type { margin-bottom: 20px; }
-            th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-            th { background: #f0f0f0; font-weight: bold; }
-            .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .pdf-footer { text-align: center; font-size: 16pt; font-weight: bold; color: #666; margin-top: 20px; position: relative; }
-            .pdf-section-container { page-break-after: always; }
-            .pdf-section-container:last-of-type { page-break-after: avoid; }
-            .print-btn { display:none; }
+        /* Contenedor temporal para generar el PDF (debe estar fuera de la vista) */
+        #pdf-content-container {
+            position: absolute;
+            top: -9999px; /* Oculto fuera de la pantalla */
+            left: 0;
+            width: 900px; /* Ancho fijo para una mejor renderización de html2canvas */
+            background: white;
+            padding: 20px;
         }
+
+        /* Estilos de tabla dentro del PDF */
+        #pdf-content-container .pdf-header { text-align: center; margin-bottom: 20px; }
+        #pdf-content-container .pdf-header h1 { font-size: 24px; margin: 2px 0; font-weight: 700; text-transform: uppercase; color: #111827; }
+        #pdf-content-container .pdf-header p { font-size: 18px; font-weight: bold; margin-top: 5px; text-align: center; color: #374151;}
+        #pdf-content-container .pdf-section-title { text-align: center; font-size: 20px; font-weight: 700; margin-top: 30px; margin-bottom: 10px; text-transform: uppercase;}
+        #pdf-content-container table { border-collapse: collapse; width: 100%; font-size: 14px; margin-bottom: 30px; }
+        #pdf-content-container th, #pdf-content-container td { border: 1px solid #333; padding: 8px; text-align: center; }
+        #pdf-content-container th { background: #f0f0f0; font-weight: bold; }
+        #pdf-content-container td.product-sensitive-header { text-align: left !important; }
+        #pdf-content-container .increased { background-color: #d4edda !important; }
+        #pdf-content-container .decreased { background-color: #f8d7da !important; }
+        #pdf-content-container .pdf-footer { text-align: center; font-size: 14px; font-weight: bold; color: #666; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -373,6 +379,8 @@
 
         <div id="toast" class="toast-container"></div>
     </div>
+
+    <div id="pdf-content-container"></div>
     
     <div id="deleteModal" class="modal">
         <div class="modal-content">
@@ -453,6 +461,9 @@
     </footer>
 
     <script>
+        // Importante: La librería jsPDF está disponible globalmente como window.jspdf.jsPDF después de cargar el script.
+        const { jsPDF } = window.jspdf;
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('service-worker.js')
@@ -505,6 +516,7 @@
             const openPrivacyModalBtn = document = document.getElementById('openPrivacyModal');
             const allCloseBtns = document.querySelectorAll('.close-btn');
             const reviewDateInput = document.getElementById('review-date');
+            const pdfContainer = document.getElementById('pdf-content-container');
             
             let saveTimer = null;
             function save() {
@@ -525,7 +537,7 @@
                 }, 2000);
             }
 
-            // MODIFICACIÓN: Función para verificar diferencias en una sección (sólo muestra advertencia)
+            // Función para verificar diferencias en una sección (sólo muestra advertencia)
             function checkDifferencesInActiveSection() {
                 const list = productos.filter(p => p.seccion === seccionActiva);
                 const timeFields = ['t0700', 't1200', 't1500', 't2200'];
@@ -535,16 +547,13 @@
                         const currentVal = parseFloat(p[timeFields[i]]);
                         const prevVal = parseFloat(p[timeFields[i - 1]]);
                         
-                        // Verifica si el valor actual es menor que el anterior (decremento)
                         if (!isNaN(currentVal) && !isNaN(prevVal) && currentVal < prevVal) {
-                            // MODIFICACIÓN: Texto simplificado: "¡Advertencia! Diferencia detectada."
                             showToast('¡Advertencia! Diferencia detectada.', 'warning');
                             return; 
                         }
                     }
                 }
             }
-            // FIN MODIFICACIÓN
             
             function renderChips() {
                 chipsEl.innerHTML = '';
@@ -557,7 +566,6 @@
                         if (s !== previousSection) {
                             seccionActiva = s;
                             render();
-                            // Llamar a la función de verificación al cambiar de sección
                             checkDifferencesInActiveSection();
                         }
                     };
@@ -574,14 +582,12 @@
                 if (currentIndex > 0 && !isNaN(currentValue) && !isNaN(prevValue)) {
                     if (currentValue < prevValue) {
                         targetInput.classList.add('decreased');
-                        // MODIFICACIÓN: Texto simplificado: "¡Advertencia! Diferencia detectada."
                         if (!suppressToast) showToast('¡Advertencia! Diferencia detectada.', 'warning');
                     } else if (currentValue > prevValue) {
                         targetInput.classList.add('increased');
                     }
                 }
             };
-            // FIN MODIFICACIÓN
 
             function createRowElement(p) {
                 const tr = document.createElement('tr');
@@ -731,21 +737,24 @@
                 if (event.target === privacyModal) privacyModal.style.display = 'none';
             };
 
-            function getPdfCellClass(currentValue, prevValue, isFirstColumn) {
+            function getPdfCellClass(currentValue, prevValue) {
                 const numCurrent = parseFloat(currentValue);
                 const numPrev = parseFloat(prevValue);
-                if (isFirstColumn) return '';
                 if (!isNaN(numCurrent) && !isNaN(numPrev)) {
                     if (numCurrent < numPrev) return 'decreased';
                     if (numCurrent > numPrev) return 'increased';
                 }
                 return '';
             }
-            btnExport.onclick = () => {
+
+            // FUNCIÓN MODIFICADA PARA GENERAR Y GUARDAR PDF AUTOMÁTICAMENTE (usando jsPDF/html2canvas)
+            btnExport.onclick = async () => {
                 if (!productos.length) {
                     showToast('No hay productos para exportar.', 'warning');
                     return;
                 }
+                showToast('Generando PDF... por favor espere.', 'warning');
+                
                 const secciones = DEFAULT_SECCIONES;
                 let contentHtml = '';
                 const reviewDateValue = reviewDateInput.value;
@@ -768,14 +777,14 @@
                             let t1200_val = r.t1200 || '';
                             let t1500_val = r.t1500 || '';
                             let t2200_val = r.t2200 || '';
-                            let class0700 = getPdfCellClass(t0700_val, '', true);
-                            let class1200 = getPdfCellClass(t1200_val, t0700_val, false);
-                            let class1500 = getPdfCellClass(t1500_val, t1200_val, false);
-                            let class2200 = getPdfCellClass(t2200_val, t1500_val, false);
+                            
+                            let class1200 = getPdfCellClass(t1200_val, t0700_val);
+                            let class1500 = getPdfCellClass(t1500_val, t1200_val);
+                            let class2200 = getPdfCellClass(t2200_val, t1500_val);
                             contentHtml += `<tr>
                                 <td>${r.precio || ''}</td>
-                                <td class="product-sensitive-header" style="text-align: left;">${r.nombre || ''}</td>
-                                <td class="${class0700}">${t0700_val}</td>
+                                <td class="product-sensitive-header">${r.nombre || ''}</td>
+                                <td>${t0700_val}</td>
                                 <td class="${class1200}">${t1200_val}</td>
                                 <td class="${class1500}">${t1500_val}</td>
                                 <td class="${class2200}">${t2200_val}</td>
@@ -790,46 +799,54 @@
                 const day = String(today.getDate()).padStart(2, '0');
                 const month = String(today.getMonth() + 1).padStart(2, '0');
                 const year = today.getFullYear();
-                const formattedDate = `${day}/${month}/${year}`;
-                
-                let fullHtml = `<html><head><meta charset='utf-8'><title>Productos Sensitivos</title>
-                    <style>
-                        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; }
-                        .printable-content { padding: 40px 30px; }
-                        .pdf-header { text-align: center; margin-bottom: 20px; }
-                        .pdf-header h1 { font-size: 20pt; margin: 2px 0; font-weight: 700; text-transform: uppercase; }
-                        .pdf-header p { font-size: 16pt; font-weight: bold; margin-top: 5px; text-align: center; }
-                        .pdf-section-title { text-align: center; font-size: 16pt; font-weight: 700; margin-top: 20px; text-transform: uppercase;}
-                        table { border-collapse: collapse; margin-top: 10px; font-size: 12pt; table-layout: fixed; margin-left: auto; margin-right: auto; width: 90%; margin-bottom: 50px; }
-                        table:last-of-type { margin-bottom: 20px; }
-                        th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-                        th { background: #f0f0f0; font-weight: bold; }
-                        .increased { background-color: #d4edda !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                        .decreased { background-color: #f8d7da !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                        .pdf-footer { text-align: center; font-size: 16pt; font-weight: bold; color: #666; margin-top: 20px; position: relative; }
-                        .pdf-section-container { page-break-after: always; }
-                        .pdf-section-container:last-of-type { page-break-after: avoid; }
-                        .print-btn { display:none; }
-                    </style>
-                </head><body>`;
-                fullHtml += `<div class="printable-content">`;
-                fullHtml += `<div class="pdf-header">`;
-                fullHtml += `<h1>GRUPO RIBA SMITH</h1>`;
-                fullHtml += `<h1>R/S CHITRÉ SELECTO</h1>
-                <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
-                <p>Fecha de Revisión: ${formattedReviewDate}</p>
-                </div>
-                ${contentHtml}
-                <div class="pdf-footer">Powered by Rafael Ramos</div>
-                </div>
-                </body>
-                </html>`;
-                const printWindow = window.open('', '_blank');
-                printWindow.document.write(fullHtml);
-                printWindow.document.close();
-                printWindow.focus();
-                setTimeout(() => printWindow.print(), 1000);
+                const formattedDate = `${day}-${month}-${year}`;
+
+                // Insertar el contenido en el contenedor oculto
+                pdfContainer.innerHTML = `
+                    <div class="pdf-header">
+                        <h1>GRUPO RIBA SMITH</h1>
+                        <h1>R/S CHITRÉ SELECTO</h1>
+                        <h1>LISTADO DE PRODUCTOS SENSITIVOS</h1>
+                        <p>Fecha de Revisión: ${formattedReviewDate}</p>
+                    </div>
+                    ${contentHtml}
+                    <div class="pdf-footer">Powered by Rafael Ramos</div>
+                `;
+
+                // Configuración y generación del PDF
+                try {
+                    const canvas = await html2canvas(pdfContainer, { scale: 2 });
+                    const imgData = canvas.toDataURL('image/png');
+                    const pdf = new jsPDF('p', 'mm', 'a4'); // 'p' vertical, 'mm' unidades, 'a4' tamaño
+                    const imgWidth = 210; // A4 width in mm
+                    const pageHeight = 295; // A4 height in mm
+                    const imgHeight = canvas.height * imgWidth / canvas.width;
+                    let heightLeft = imgHeight;
+                    let position = 0;
+
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+
+                    // Manejo de múltiples páginas
+                    while (heightLeft >= 0) {
+                        position = heightLeft - imgHeight;
+                        pdf.addPage();
+                        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                        heightLeft -= pageHeight;
+                    }
+
+                    pdf.save(`Productos_Sensitivos_${formattedDate}.pdf`);
+                    showToast('Pdf guardado automáticamente.', 'success');
+                } catch (error) {
+                    console.error("Error al generar el PDF:", error);
+                    showToast('Error al generar el PDF. Revisa la consola.', 'error');
+                } finally {
+                    pdfContainer.innerHTML = ''; // Limpiar el contenido
+                }
             };
+            // FIN DE LA FUNCIÓN MODIFICADA
+
+
             const handleExportJson = () => {
                 if (!productos.length) {
                     showToast('No hay datos para exportar.', 'warning');
